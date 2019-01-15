@@ -5,21 +5,16 @@ Created on Mon Jan  7 21:28:44 2019
 @author: owner
 """
 
+classes = {1: "Wizard", 2: "Warrior"}
+
 class Player:
-    def __init__(self, name, dmg=0, block=0):
+    def __init__(self, name, dmg=0, block=0, inventory=[]):
         self.name = name
         self.dmg = dmg
         self.block = block
-              
-class Warrior(Player):
-    
-    def heavyBlow(self):
-        print("Bashes enemy for: " + str(self.dmg) + " dmg")
+        self.inventory = inventory
         
-    def fortify(self):
-        print("Increases block by: 1")
-        self.block += 1
-                    
+        
 class Wizard(Player):
     
     def fireBall(self):
@@ -28,7 +23,20 @@ class Wizard(Player):
     def frostBite(self):
         print("Freezes enemy for: " + str(self.dmg) + " dmg")
         
-merlin = Wizard("merlin")
+              
+class Warrior(Player):
+         
+    def heavyBlow(self):
+        print("Bashes enemy for: " + str(self.dmg) + " dmg")
+        
+    def fortify(self):
+        print("Increases block by: 1")
+        self.block += 1
+    
+                    
+
+        
+
 
 
         
