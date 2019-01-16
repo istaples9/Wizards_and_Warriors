@@ -16,6 +16,7 @@ tier = {1: 4}
 
 def newGame():
     global name
+    global hp
     global clss
     plyr_class = int(input("Choose class, enter(1) for Wizard and (2) for Warrior:"))
     if plyr_class not in WW_classes.classes:
@@ -27,10 +28,12 @@ def newGame():
         name = WW_classes.Wizard(name)
     if plyr_class == 2:
         name = WW_classes.Warrior(name)
+    hp = name.hp
     story()
     
 def show_stats():
-    print("\n", name.name, "|", clss, "|", "Dmg:", name.dmg, "|", "Block:", name.block, "\n", name.inventory)
+    print("\n", name.name, "|", clss, "|", "HP:", hp, "|", "Dmg:", name.dmg, "|", "Block:", name.block)
+    print(name.inventory)
     
     
 def loot():
