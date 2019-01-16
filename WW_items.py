@@ -8,9 +8,10 @@ import WW_classes
 
 atk_itms = {0: "Hammer", 1: "Staff"}
 def_itms = {2: "Wooden Shield", 3: "Wizards Hat"}
+hp_itms = {4: "Apple Pie", 5: "Snickers Bar"}
 items = atk_itms.copy()
 items.update(def_itms)
-
+items.update(hp_itms)
 
 class Stats:
     

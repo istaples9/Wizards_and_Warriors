@@ -18,7 +18,11 @@ def newGame():
     global name
     global hp
     global clss
-    plyr_class = int(input("Choose class, enter(1) for Wizard and (2) for Warrior:"))
+    try:
+        plyr_class = int(input("Choose class, enter(1) for Wizard and (2) for Warrior:"))
+    except:
+        print("Invalid class.")
+        return newGame()
     if plyr_class not in WW_classes.classes:
         print("Invalid class.")
         return newGame()
@@ -31,8 +35,9 @@ def newGame():
     hp = name.hp
     story()
     
+    
 def show_stats():
-    print("\n", name.name, "|", clss, "|", "HP:", hp, "|", "Dmg:", name.dmg, "|", "Block:", name.block)
+    print("\n", name.name, "|", clss, "|", "HP:", name.hp, "|", "Dmg:", name.dmg, "|", "Block:", name.block)
     print(name.inventory)
     
     
@@ -46,6 +51,9 @@ def loot():
     elif item.item in WW_items.def_itms.values():
         print(item.item, "|", "Block:", item.stats)
         equip(item, "block")
+    elif item.item in WW_items.hp_itms.values():
+        print(item.item, "|", "HP:", item.stats)
+        equip(item, "hp")
     
     
     
@@ -58,6 +66,8 @@ def equip(item, typ):
         if typ == "block":
             name.block += item.stats
             name.inventory.append([item.item, "Block:" + str(item.stats)])
+        if typ == "hp":
+            name.hp += item.stats
     show_stats()
     
          
