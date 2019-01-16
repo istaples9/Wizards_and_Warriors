@@ -13,6 +13,9 @@ class Player:
         self.dmg = dmg
         self.block = block
         self.inventory = inventory
+    
+    def __repr__(self, inventory):
+        return f"{self.inventory}"
         
         
 class Wizard(Player):

@@ -16,6 +16,8 @@ class Stats:
     def __init__(self, item, stats=1):
         self.item = item
         self.stats = stats
+        
+    
 
 
     
