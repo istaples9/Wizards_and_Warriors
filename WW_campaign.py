@@ -11,6 +11,9 @@ from random import randint
 
 loot_ops = {0: "You found a tresure chest!"}
 
+tier = {1: 4}
+
+
 def newGame():
     plyr_class = int(input("Choose class, enter(1) for Wizard and (2) for Warrior:"))
     if plyr_class not in WW_classes.classes:
@@ -25,13 +28,13 @@ def newGame():
     story()
     
 def show_stats():
-    print(name.name, "|", "Dmg:", name.dmg, "  Block:", name.block, "\n", name.inventory)
+    print("\n", name.name, "|", "Dmg:", name.dmg, "  Block:", name.block, "\n", name.inventory)
     
     
 def loot():
     n = len(WW_items.items) - 1
     item = WW_items.items[roll(n)]
-    item = WW_items.Stats(item)
+    item = WW_items.Stats(item, roll(tier[1]))
     if item.item in WW_items.atk_itms.values():
         print(item.item, "|", "Dmg:", item.stats)
         equip(item, "dmg")
@@ -46,21 +49,24 @@ def equip(item, typ):
     if pick_up.lower() == "y":
         if typ == "dmg":
             name.dmg += item.stats
+            name.inventory.append([item.item, "Dmg:" + str(item.stats)])
         if typ == "block":
             name.block += item.stats
-        name.inventory.append(item.item)
+            name.inventory.append([item.item, "Block:" + str(item.stats)])
     show_stats()
     
          
 def roll(n):
     return randint(0, n)
    
-              
-newGame()
+             
 
 ###STORY###
 def story():
     loot()
+    
+    
+newGame()
     
 
     
