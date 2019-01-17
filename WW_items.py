@@ -10,8 +10,8 @@ atk_itms = {0: "Hammer", 1: "Staff"}
 def_itms = {2: "Wooden Shield", 3: "Wizards Hat"}
 hp_itms = {4: "Apple Pie", 5: "Snickers Bar"}
 mp_itms = {6: "Minor Mana Potion", 7: "Mana Potion"}
-wizard_tomes = {8: "Fireball", 9: "Frostbite"}
-warrior_tomes = {10: "Heavy Blow", 11: "Fortify"}
+wizard_tomes = {8: "FireBall", 9: "FrostBite"}
+warrior_tomes = {10: "HeavyBlow", 11: "Fortify"}
 
 items = atk_itms.copy()
 items.update(def_itms)

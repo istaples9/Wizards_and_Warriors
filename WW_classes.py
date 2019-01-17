@@ -8,7 +8,7 @@ Created on Mon Jan  7 21:28:44 2019
 classes = {1: "Wizard", 2: "Warrior"}
 
 class Player:
-    def __init__(self, name, hp=5, mp=5, dmg=0, block=0, equipment=[], skills=[]):
+    def __init__(self, name, hp=5, mp=5, dmg=0, block=0, equipment=[], skills=[], inventory=[]):
         self.name = name
         self.hp = hp
         self.mp = mp
@@ -16,6 +16,7 @@ class Player:
         self.block = block
         self.equipment = equipment
         self.skills = skills
+        self.inventory = inventory
     
     def __repr__(self, inventory):
         return f"{self.inventory}"
@@ -23,19 +24,19 @@ class Player:
         
 class Wizard(Player):
     
-    def fireBall(self):
+    def FireBall(self):
         print("Sears enemy for: " + str(self.dmg) + " dmg")
         
-    def frostBite(self):
+    def FrostBite(self):
         print("Freezes enemy for: " + str(self.dmg) + " turns.")
         
               
 class Warrior(Player):
          
-    def heavyBlow(self):
+    def HeavyBlow(self):
         print("Bashes enemy for: " + str(self.dmg) + " dmg")
         
-    def fortify(self):
+    def Fortify(self):
         print("Increases block by: 1")
         self.block += 1
     

@@ -40,6 +40,7 @@ def show_stats():
     print("\n", name.name, "|", clss, "|", "HP:", name.hp, "|", "MP:", name.mp, "|", "Dmg:", name.dmg, "|", "Block:", name.block)
     print("Skills: ", name.skills)
     print("Equipment: ", name.equipment)
+    print("Inventory: ", name.inventory)
     
     
 def loot():
@@ -53,16 +54,18 @@ def loot():
         print(item.item, "|", "Block:", item.stats)
         equip(item, "block")
     elif item.item in WW_items.hp_itms.values():
-        print(item.item, "|", "HP:", item.stats)
+        print(item.item, "|", "HP +", item.stats)
         equip(item, "hp")
     elif item.item in WW_items.mp_itms.values():
-        print(item.item, "|", "MP:", item.stats)
+        print(item.item, "|", "MP +", item.stats)
         equip(item, "mp")
     elif item.item in WW_items.wizard_tomes.values():
-        print(item.item, "|", "Wizard Tome:", item.stats, "|", "Mana: ", item.mana)
+        x = WW_classes.Wizard(name)
+        print("Wizard Tome", "|",item.item, "|", "|", "Mana: ", item.mana)
         equip(item, "wiz")
     elif item.item in WW_items.warrior_tomes.values():
-        print(item.item, "|", "Warrior Tome:", item.stats, "|", "Mana: ", item.mana)
+        x = WW_classes.Warrior(name)
+        print("Warrior Tome", "|",item.item, "|", "|", "Mana: ", item.mana)
         equip(item, "war")
     
     
@@ -77,9 +80,9 @@ def equip(item, typ):
             name.block += item.stats
             name.equipment.append([item.item, "Block:" + str(item.stats)])
         if typ == "hp":
-            name.hp += item.stats
+            name.inventory.append([item.item, "HP+" + str(item.stats)])
         if typ == "mp":
-            name.mp += item.stats
+            name.inventory.append([item.item, "MP+" + str(item.stats)])
         if typ == "wiz" and clss == "Wizard":
             name.skills.append([item.item, "blank"])
         if typ == "war" and clss == "Warrior":
