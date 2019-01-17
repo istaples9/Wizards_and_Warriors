@@ -37,7 +37,8 @@ def newGame():
     
     
 def show_stats():
-    print("\n", name.name, "|", clss, "|", "HP:", name.hp, "|", "Dmg:", name.dmg, "|", "Block:", name.block)
+    print("\n", name.name, "|", clss, "|", "HP:", name.hp, "|", "MP:", name.mp, "|", "Dmg:", name.dmg, "|", "Block:", name.block)
+    print(name.skills)
     print(name.inventory)
     
     
@@ -54,6 +55,15 @@ def loot():
     elif item.item in WW_items.hp_itms.values():
         print(item.item, "|", "HP:", item.stats)
         equip(item, "hp")
+    elif item.item in WW_items.mp_itms.values():
+        print(item.item, "|", "MP:", item.stats)
+        equip(item, "mp")
+    elif item.item in WW_items.wizard_tomes.values():
+        print(item.item, "|", "Wizard Tome:", item.stats)
+        equip(item, "wiz")
+    elif item.item in WW_items.warrior_tomes.values():
+        print(item.item, "|", "Warrior Tome:", item.stats)
+        equip(item, "war")
     
     
     
@@ -68,6 +78,14 @@ def equip(item, typ):
             name.inventory.append([item.item, "Block:" + str(item.stats)])
         if typ == "hp":
             name.hp += item.stats
+        if typ == "mp":
+            name.mp += item.stats
+        if typ == "wiz" and clss == "Wizard":
+            name.skills.append([item.item, "blank"])
+        if typ == "war" and clss == "Warrior":
+            name.skills.append([item.item, "blank"])
+        else:
+            print("\n" + "wrong class")
     show_stats()
     
          
