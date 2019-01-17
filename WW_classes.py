@@ -8,13 +8,13 @@ Created on Mon Jan  7 21:28:44 2019
 classes = {1: "Wizard", 2: "Warrior"}
 
 class Player:
-    def __init__(self, name, hp=5, mp=5, dmg=0, block=0, inventory=[], skills=[]):
+    def __init__(self, name, hp=5, mp=5, dmg=0, block=0, equipment=[], skills=[]):
         self.name = name
         self.hp = hp
         self.mp = mp
         self.dmg = dmg
         self.block = block
-        self.inventory = inventory
+        self.equipment = equipment
         self.skills = skills
     
     def __repr__(self, inventory):
