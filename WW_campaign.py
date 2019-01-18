@@ -44,28 +44,29 @@ def show_stats():
     
     
 def loot():
+    global skill
     n = len(WW_items.items) - 1
     item = WW_items.items[roll(n)]
     item = WW_items.Stats(item, roll(tier[1]))
     if item.item in WW_items.atk_itms.values():
-        print(item.item, "|", "Dmg:", item.stats)
+        print("\n", item.item, "|", "Dmg:", item.stats)
         equip(item, "dmg")
     elif item.item in WW_items.def_itms.values():
-        print(item.item, "|", "Block:", item.stats)
+        print("\n", item.item, "|", "Block:", item.stats)
         equip(item, "block")
     elif item.item in WW_items.hp_itms.values():
-        print(item.item, "|", "HP +", item.stats)
+        print("\n", item.item, "|", "HP +", item.stats)
         equip(item, "hp")
     elif item.item in WW_items.mp_itms.values():
-        print(item.item, "|", "MP +", item.stats)
+        print("\n", item.item, "|", "MP +", item.stats)
         equip(item, "mp")
     elif item.item in WW_items.wizard_tomes.values():
-        x = WW_classes.Wizard(name)
-        print("Wizard Tome", "|",item.item, "|", "|", "Mana: ", item.mana)
+        print("\n", "Wizard Tome", "|",item.item, "|", "|", "Mana:", item.mana)
+        WW_classes.Wizard.attack(item.item)
         equip(item, "wiz")
     elif item.item in WW_items.warrior_tomes.values():
-        x = WW_classes.Warrior(name)
-        print("Warrior Tome", "|",item.item, "|", "|", "Mana: ", item.mana)
+        print("\n", "Warrior Tome", "|",item.item, "|", "|", "Mana:", item.mana)
+        WW_classes.Warrior.attack(item.item)
         equip(item, "war")
     
     
@@ -75,25 +76,26 @@ def equip(item, typ):
     if pick_up.lower() == "y":
         if typ == "dmg":
             name.dmg += item.stats
-            name.equipment.append([item.item, "Dmg:" + str(item.stats)])
-        if typ == "block":
+            name.equipment[item.item] = ["Dmg:", item.stats]
+        elif typ == "block":
             name.block += item.stats
-            name.equipment.append([item.item, "Block:" + str(item.stats)])
-        if typ == "hp":
-            name.inventory.append([item.item, "HP+" + str(item.stats)])
-        if typ == "mp":
-            name.inventory.append([item.item, "MP+" + str(item.stats)])
-        if typ == "wiz" and clss == "Wizard":
-            name.skills.append([item.item, "blank"])
-        if typ == "war" and clss == "Warrior":
-            name.skills.append([item.item, "blank"])
+            name.equipment[item.item] = ["Block:", item.stats]
+        elif typ == "hp":
+            name.inventory[item.item] = ["HP+", item.stats]
+        elif typ == "mp":
+            name.inventory[item.item] = ["MP+", item.stats]
+        elif typ == "wiz" and clss == "Wizard":
+            name.skills[item.item] = ["Mana:", item.mana, WW_classes.Wizard.attack(item.item), item.stats]
+        elif typ == "war" and clss == "Warrior":
+            name.skills[item.item] = ["Mana:", item.mana, WW_classes.Warrior.attack(item.item), item.stats]
         else:
             print("\n" + "wrong class")
     show_stats()
+    loot()
     
          
 def roll(n):
-    return randint(0, n)
+    return randint(1, n)
    
              
 

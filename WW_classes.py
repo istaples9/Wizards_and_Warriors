@@ -8,7 +8,7 @@ Created on Mon Jan  7 21:28:44 2019
 classes = {1: "Wizard", 2: "Warrior"}
 
 class Player:
-    def __init__(self, name, hp=5, mp=5, dmg=0, block=0, equipment=[], skills=[], inventory=[]):
+    def __init__(self, name, hp=5, mp=5, dmg=0, block=0, equipment={}, skills={}, inventory={}):
         self.name = name
         self.hp = hp
         self.mp = mp
@@ -24,24 +24,26 @@ class Player:
         
 class Wizard(Player):
     
-    def FireBall(self):
-        print("Sears enemy for: " + str(self.dmg) + " dmg")
-        
-    def FrostBite(self):
-        print("Freezes enemy for: " + str(self.dmg) + " turns.")
-        
-              
+    
+    def attack(skill):
+        description = ""
+        if str(skill) == 'FireBall':
+            description = "Burns ya"
+            return description
+        if str(skill) == 'FrostBite':
+            description = "Freezes ya"
+            return description
+    
+                 
 class Warrior(Player):
          
-    def HeavyBlow(self):
-        print("Bashes enemy for: " + str(self.dmg) + " dmg")
-        
-    def Fortify(self):
-        print("Increases block by: 1")
-        self.block += 1
-    
-                    
-
+    def attack(skill):
+        if str(skill) == 'HeavyBlow':
+            description = "Stuns ya"
+            return description
+        if str(skill) == 'Fortify':
+            description = "Blocks ya"
+            return description
         
 
 

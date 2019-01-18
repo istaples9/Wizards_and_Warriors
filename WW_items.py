@@ -6,12 +6,12 @@ Created on Tue Jan  8 19:05:14 2019
 """
 import WW_classes
 
-atk_itms = {0: "Hammer", 1: "Staff"}
-def_itms = {2: "Wooden Shield", 3: "Wizards Hat"}
-hp_itms = {4: "Apple Pie", 5: "Snickers Bar"}
-mp_itms = {6: "Minor Mana Potion", 7: "Mana Potion"}
-wizard_tomes = {8: "FireBall", 9: "FrostBite"}
-warrior_tomes = {10: "HeavyBlow", 11: "Fortify"}
+atk_itms = {1: "Hammer", 2: "Staff"}
+def_itms = {3: "Wooden Shield", 4: "Helmet"}
+hp_itms = {5: "Apple Pie", 6: "Snickers Bar"}
+mp_itms = {7: "Minor Mana Potion", 8: "Mana Potion"}
+wizard_tomes = {9: "FireBall", 10: "FrostBite"}
+warrior_tomes = {11: "HeavyBlow", 12: "Fortify"}
 
 items = atk_itms.copy()
 items.update(def_itms)
