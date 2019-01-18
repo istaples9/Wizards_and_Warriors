@@ -44,7 +44,7 @@ def show_stats():
     
     
 def loot():
-    global skill
+    global skill_type
     n = len(WW_items.items) - 1
     item = WW_items.items[roll(n)]
     item = WW_items.Stats(item, roll(tier[1]))
@@ -61,12 +61,12 @@ def loot():
         print("\n", item.item, "|", "MP +", item.stats)
         equip(item, "mp")
     elif item.item in WW_items.wizard_tomes.values():
-        print("\n", "Wizard Tome", "|",item.item, "|", "|", "Mana:", item.mana)
-        WW_classes.Wizard.attack(item.item)
+        skill_type = WW_classes.Wizard.attack(item.item)
+        print("\n", "Wizard Tome", "|",item.item, "|", "Mana:", item.mana, "|", skill_type, item.stats)
         equip(item, "wiz")
     elif item.item in WW_items.warrior_tomes.values():
-        print("\n", "Warrior Tome", "|",item.item, "|", "|", "Mana:", item.mana)
-        WW_classes.Warrior.attack(item.item)
+        skill_type = WW_classes.Wizard.attack(item.item)
+        print("\n", "Warrior Tome", "|",item.item, "|", "Mana:", item.mana, "|", skill_type, item.stats)
         equip(item, "war")
     
     
@@ -85,13 +85,13 @@ def equip(item, typ):
         elif typ == "mp":
             name.inventory[item.item] = ["MP+", item.stats]
         elif typ == "wiz" and clss == "Wizard":
-            name.skills[item.item] = ["Mana:", item.mana, WW_classes.Wizard.attack(item.item), item.stats]
+            name.skills[item.item] = ["Mana:", item.mana, skill_type, item.stats]
         elif typ == "war" and clss == "Warrior":
-            name.skills[item.item] = ["Mana:", item.mana, WW_classes.Warrior.attack(item.item), item.stats]
+            name.skills[item.item] = ["Mana:", item.mana, skill_type, item.stats]
         else:
             print("\n" + "wrong class")
     show_stats()
-    loot()
+
     
          
 def roll(n):

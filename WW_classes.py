@@ -28,10 +28,10 @@ class Wizard(Player):
     def attack(skill):
         description = ""
         if str(skill) == 'FireBall':
-            description = "Burns ya"
+            description = "Burn Dmg:"
             return description
         if str(skill) == 'FrostBite':
-            description = "Freezes ya"
+            description = "Freeze:"
             return description
     
                  
@@ -39,10 +39,10 @@ class Warrior(Player):
          
     def attack(skill):
         if str(skill) == 'HeavyBlow':
-            description = "Stuns ya"
+            description = "Stun: "
             return description
         if str(skill) == 'Fortify':
-            description = "Blocks ya"
+            description = "Block+"
             return description
         
 
