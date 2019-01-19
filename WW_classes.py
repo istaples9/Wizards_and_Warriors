@@ -8,8 +8,9 @@ Created on Mon Jan  7 21:28:44 2019
 classes = {1: "Wizard", 2: "Warrior"}
 
 class Player:
-    def __init__(self, name, hp=5, mp=5, dmg=0, block=0, equipment={}, skills={}, inventory={}):
+    def __init__(self, name, clss=None, hp=5, mp=5, dmg=0, block=0, equipment={}, skills={}, inventory={}):
         self.name = name
+        self.clss = clss
         self.hp = hp
         self.mp = mp
         self.dmg = dmg
@@ -18,9 +19,6 @@ class Player:
         self.skills = skills
         self.inventory = inventory
     
-    def __repr__(self, inventory):
-        return f"{self.inventory}"
-        
         
 class Wizard(Player):
     

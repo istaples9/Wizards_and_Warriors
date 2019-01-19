@@ -16,31 +16,29 @@ tier = {1: 4}
 
 def newGame():
     global name
-    global hp
-    global clss
     try:
         plyr_class = int(input("Choose class, enter(1) for Wizard and (2) for Warrior:"))
     except:
-        print("Invalid class.")
+        print("\n", "Invalid class.")
         return newGame()
     if plyr_class not in WW_classes.classes:
-        print("Invalid class.")
+        print("\n", "Invalid class.")
         return newGame()
     name = input("Name your character: ")
-    clss = WW_classes.classes[plyr_class]
-    if plyr_class == 1:
+    plyr_class = WW_classes.classes[plyr_class]
+    if plyr_class == "Wizard":
         name = WW_classes.Wizard(name)
-    if plyr_class == 2:
+    if plyr_class == "Warrior":
         name = WW_classes.Warrior(name)
-    hp = name.hp
+    name.clss = plyr_class
     story()
     
     
-def show_stats():
-    print("\n", name.name, "|", clss, "|", "HP:", name.hp, "|", "MP:", name.mp, "|", "Dmg:", name.dmg, "|", "Block:", name.block)
-    print("Skills: ", name.skills)
-    print("Equipment: ", name.equipment)
-    print("Inventory: ", name.inventory)
+def show_stats(char):
+    print("\n", char.name, "|", char.clss, "|", "HP:", char.hp, "|", "MP:", char.mp, "|", "Dmg:", char.dmg, "|", "Block:", char.block)
+    print("Skills: ", char.skills)
+    print("Equipment: ", char.equipment)
+    print("Inventory: ", char.inventory)
     
     
 def loot():
@@ -84,13 +82,39 @@ def equip(item, typ):
             name.inventory[item.item] = ["HP+", item.stats]
         elif typ == "mp":
             name.inventory[item.item] = ["MP+", item.stats]
-        elif typ == "wiz" and clss == "Wizard":
+        elif typ == "wiz" and name.clss == "Wizard":
             name.skills[item.item] = ["Mana:", item.mana, skill_type, item.stats]
-        elif typ == "war" and clss == "Warrior":
+        elif typ == "war" and name.clss == "Warrior":
             name.skills[item.item] = ["Mana:", item.mana, skill_type, item.stats]
         else:
             print("\n" + "wrong class")
-    show_stats()
+    show_stats(name)
+    use(item.item, typ)
+    
+    
+    
+    
+def use(item_skill, typ):
+    x = setattr(name, typ, getattr(item_skill, stats))
+    print(x)
+    if item_skill in name.skills:
+        name.skills.pop(item_skill)
+    elif item_skill in name.equipment:
+        name.equipment.pop(item_skill)
+    elif item_skill in name.inventory:
+        name.inventory.pop(item_skill)
+    else:
+        print("Not in pack")
+    show_stats(name)
+    
+    
+    
+    
+def battle(enemy):
+    print("Enemy encountered!")
+    
+    #show enemy stats
+     
 
     
          
@@ -105,6 +129,7 @@ def story():
     
     
 newGame()
+
     
 
     
