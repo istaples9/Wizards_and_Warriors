@@ -22,8 +22,9 @@ items.update(warrior_tomes)
 
 class Stats:
     
-    def __init__(self, item, stats=1, mana=1):
-        self.item = item
+    def __init__(self, name, typ=None, stats=1, mana=1):
+        self.name = name
+        self.typ = typ
         self.stats = stats
         self.mana = mana
         

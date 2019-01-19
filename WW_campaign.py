@@ -15,7 +15,7 @@ tier = {1: 4}
 
 
 def newGame():
-    global name
+    global plyr
     try:
         plyr_class = int(input("Choose class, enter(1) for Wizard and (2) for Warrior:"))
     except:
@@ -24,13 +24,13 @@ def newGame():
     if plyr_class not in WW_classes.classes:
         print("\n", "Invalid class.")
         return newGame()
-    name = input("Name your character: ")
+    plyr = input("Name your character: ")
     plyr_class = WW_classes.classes[plyr_class]
     if plyr_class == "Wizard":
-        name = WW_classes.Wizard(name)
+        plyr = WW_classes.Wizard(plyr)
     if plyr_class == "Warrior":
-        name = WW_classes.Warrior(name)
-    name.clss = plyr_class
+        plyr = WW_classes.Warrior(plyr)
+    plyr.clss = plyr_class
     story()
     
     
@@ -44,68 +44,70 @@ def show_stats(char):
 def loot():
     global skill_type
     n = len(WW_items.items) - 1
-    item = WW_items.items[roll(n)]
-    item = WW_items.Stats(item, roll(tier[1]))
-    if item.item in WW_items.atk_itms.values():
-        print("\n", item.item, "|", "Dmg:", item.stats)
-        equip(item, "dmg")
-    elif item.item in WW_items.def_itms.values():
-        print("\n", item.item, "|", "Block:", item.stats)
-        equip(item, "block")
-    elif item.item in WW_items.hp_itms.values():
-        print("\n", item.item, "|", "HP +", item.stats)
-        equip(item, "hp")
-    elif item.item in WW_items.mp_itms.values():
-        print("\n", item.item, "|", "MP +", item.stats)
-        equip(item, "mp")
-    elif item.item in WW_items.wizard_tomes.values():
-        skill_type = WW_classes.Wizard.attack(item.item)
-        print("\n", "Wizard Tome", "|",item.item, "|", "Mana:", item.mana, "|", skill_type, item.stats)
-        equip(item, "wiz")
-    elif item.item in WW_items.warrior_tomes.values():
-        skill_type = WW_classes.Wizard.attack(item.item)
-        print("\n", "Warrior Tome", "|",item.item, "|", "Mana:", item.mana, "|", skill_type, item.stats)
-        equip(item, "war")
+    name = WW_items.items[roll(n)]
+    item = WW_items.Stats(name)
+    item.name = name
+    item.stats = roll(tier[1])
+    if item.name in WW_items.atk_itms.values():
+        item.typ = 'dmg'
+        print("\n", item.name, "|", "Dmg:", item.stats)
+    elif item.name in WW_items.def_itms.values():
+        item.typ = 'block'
+        print("\n", item.name, "|", "Block:", item.stats)
+    elif item.name in WW_items.hp_itms.values():
+        item.typ = 'hp'
+        print("\n", item.name, "|", "HP +", item.stats)
+    elif item.name in WW_items.mp_itms.values():
+        item.typ = 'mp'
+        print("\n", item.name, "|", "MP +", item.stats)
+    elif item.name in WW_items.wizard_tomes.values():
+        item.typ = 'wiz'
+        skill_type = WW_classes.Wizard.attack(item)
+        print("\n", "Wizard Tome", "|", item.name, "|", "Mana:", item.mana, "|", skill_type, item.stats)
+    elif item.name in WW_items.warrior_tomes.values():
+        item.typ = 'war'
+        skill_type = WW_classes.Wizard.attack(item)
+        print("\n", "Warrior Tome", "|", item.name, "|", "Mana:", item.mana, "|", skill_type, item.stats)
+    equip(item)
     
     
     
-def equip(item, typ):
+def equip(item):
     pick_up = input("Equip?")
     if pick_up.lower() == "y":
-        if typ == "dmg":
-            name.dmg += item.stats
-            name.equipment[item.item] = ["Dmg:", item.stats]
-        elif typ == "block":
-            name.block += item.stats
-            name.equipment[item.item] = ["Block:", item.stats]
-        elif typ == "hp":
-            name.inventory[item.item] = ["HP+", item.stats]
-        elif typ == "mp":
-            name.inventory[item.item] = ["MP+", item.stats]
-        elif typ == "wiz" and name.clss == "Wizard":
-            name.skills[item.item] = ["Mana:", item.mana, skill_type, item.stats]
-        elif typ == "war" and name.clss == "Warrior":
-            name.skills[item.item] = ["Mana:", item.mana, skill_type, item.stats]
+        if item.typ == "dmg":
+            plyr.dmg += item.stats
+            plyr.equipment[item.name] = ["Dmg:", item.stats]
+        elif item.typ == "block":
+            plyr.block += item.stats
+            plyr.equipment[item.name] = ["Block:", item.stats]
+        elif item.typ == "hp":
+            plyr.inventory[item.name] = ["HP+", item.stats]
+        elif item.typ == "mp":
+            plyr.inventory[item.name] = ["MP+", item.stats]
+        elif item.typ == "wiz" and plyr.clss == "Wizard":
+            plyr.skills[item.name] = ["Mana:", item.mana, skill_type, item.stats]
+        elif item.typ == "war" and plyr.clss == "Warrior":
+            plyr.skills[item.name] = ["Mana:", item.mana, skill_type, item.stats]
         else:
             print("\n" + "wrong class")
-    show_stats(name)
-    use(item.item, typ)
+    show_stats(plyr)
+    use(item)
     
     
     
-    
-def use(item_skill, typ):
-    x = setattr(name, typ, getattr(item_skill, stats))
-    print(x)
-    if item_skill in name.skills:
-        name.skills.pop(item_skill)
-    elif item_skill in name.equipment:
-        name.equipment.pop(item_skill)
-    elif item_skill in name.inventory:
-        name.inventory.pop(item_skill)
-    else:
+def use(item):
+    if item.name in plyr.skills:
+        plyr.skills.pop(item.name)
+    elif item.name in plyr.equipment:
+        setattr(plyr, item.typ, getattr(plyr, item.typ) - item.stats)
+        plyr.equipment.pop(item.name)
+    elif item.name in plyr.inventory:
+        setattr(plyr, item.typ, getattr(plyr, item.typ) + item.stats)
+        plyr.inventory.pop(item.name)
+    else:  
         print("Not in pack")
-    show_stats(name)
+    show_stats(plyr)
     
     
     
