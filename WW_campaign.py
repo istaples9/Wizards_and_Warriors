@@ -45,7 +45,7 @@ def loot():
     global skill_type
     n = len(WW_items.items) - 1
     name = WW_items.items[roll(n)]
-    item = WW_items.Stats(name)
+    item = WW_items.Item(name)
     item.name = name
     item.stats = roll(tier[1])
     if item.name in WW_items.atk_itms.values():
@@ -67,43 +67,34 @@ def loot():
     elif item.name in WW_items.wizard_tomes.values():
         item.typ = 'wiz'
         item.cat = 'skills'
-        skill_type = WW_classes.Wizard.attack(item)
+        skill_type = WW_classes.Wizard.attack(item.name)
         print("\n", "Wizard Tome", "|", item.name, "|", "Mana:", item.mana, "|", skill_type, item.stats)
     elif item.name in WW_items.warrior_tomes.values():
         item.typ = 'war'
         item.cat = 'skills'
-        skill_type = WW_classes.Wizard.attack(item)
+        skill_type = WW_classes.Wizard.attack(item.name)
         print("\n", "Warrior Tome", "|", item.name, "|", "Mana:", item.mana, "|", skill_type, item.stats)
-    equip(item)
-    
+    choice = int(input("Enter (1) to equip item or enter nothing to cancel:"))
+    if choice == 1:
+        equip(item)
     
     
 def equip(item):
-    show_stats(plyr)
-    pick_up = input("Equip?")
-    if pick_up.lower() == "y":
-        plyr_cat = getattr(plyr, item.cat)
-        if len(plyr_cat) < 2 and item not in plyr_cat:
-            if item.typ == "dmg":
-                plyr.dmg += item.stats
-                plyr.equipment[item.name] = ["Dmg:", item.stats]
-            elif item.typ == "block":
-                plyr.block += item.stats
-                plyr.equipment[item.name] = ["Block:", item.stats]
-            elif item.typ == "hp":
-                plyr.inventory[item.name] = ["HP+", item.stats]
-            elif item.typ == "mp":
-                plyr.inventory[item.name] = ["MP+", item.stats]
-            elif item.typ == "wiz" and plyr.clss == "Wizard":
-                plyr.skills[item.name] = ["Mana:", item.mana, skill_type, item.stats]
-            elif item.typ == "war" and plyr.clss == "Warrior":
-                plyr.skills[item.name] = ["Mana:", item.mana, skill_type, item.stats]
-            else:
-                print("\n" + "wrong class")
-        else:
-            swap(item)
-    else:
-        pass
+    plyr_cat = getattr(plyr, item.cat)
+    if item.name in plyr_cat:
+        swap(item)
+    elif len(plyr_cat) < 2 and item.name not in plyr_cat:
+        if item.typ == "wiz" and plyr.clss == "Wizard":
+            plyr_cat[item.name] = ["Mana:", item.mana, skill_type, item.stats]
+        elif item.typ == "war" and plyr.clss == "Warrior":
+            plyr_cat[item.name] = ["Mana:", item.mana, skill_type, item.stats]
+        elif item.typ == 'dmg' or item.typ == 'block':
+            setattr(plyr, item.typ, getattr(plyr, item.typ) + item.stats)
+            plyr_cat[item.name] = [item.typ, item.stats]
+        elif item.typ == 'hp' or item.typ == 'mp':
+            plyr_cat[item.name] = [item.typ, item.stats]
+        else: 
+            print("\n" + "Wrong class")
     show_stats(plyr)
     
     
@@ -119,11 +110,47 @@ def use(item):
         plyr.inventory.pop(item.name)
     else:  
         print("Not in pack")
-    show_stats(plyr)
     
 
 def swap(item):
-    print('swap')
+    plyr_cat = getattr(plyr, item.cat)
+    cat_lst = list(plyr_cat)
+    if item.name in plyr_cat:
+        choice = int(input("You can only have on of each item in your inventory, enter (1) to swap " + str(item.name) + " or enter nothing to cancel:"))
+        if choice == 1:
+            plyr_cat.pop(item.name)
+            equip(item)
+        else:
+            story()
+    elif len(cat_lst) == 2 and item.name not in plyr_cat:
+        choice = int(input("Choose item to drop, enter (1) for " + str(cat_lst[0]) + ", (2) for " + str(cat_lst[1]) + ", or enter nothing to cancel:"))
+        if choice == 1:
+            x = cat_lst[0]
+            swap_item = WW_items.Item(x)
+            swap_item.stats = plyr_cat[x][-1]
+            swap_item.typ = plyr_cat[x][-2]
+            use(swap_item)
+            equip(item)
+        elif choice == 2:
+            x = cat_lst[1]
+            swap_item = WW_items.Item(x)
+            swap_item.stats = plyr_cat[x][-1]
+            swap_item.typ = plyr_cat[x][-2]
+            use(swap_item)
+            equip(item)
+    elif len(cat_lst) == 1 and item.name not in plyr_cat:
+        choice = int(input("Choose item to drop, enter (1) for " + str(cat_lst[0]) + ", or enter nothing to cancel:"))
+        if choice == 1:
+            x = cat_lst[0]
+            swap_item = WW_items.Item(x)
+            swap_item.stats = plyr_cat[x][-1]
+            swap_item.typ = plyr_cat[x][-2]
+            use(swap_item)
+            equip(item)
+            
+            
+        
+    
     
     
     

@@ -4,7 +4,6 @@ Created on Tue Jan  8 19:05:14 2019
 
 @author: owner
 """
-import WW_classes
 
 atk_itms = {1: "Hammer", 2: "Staff"}
 def_itms = {3: "Wooden Shield", 4: "Helmet"}
@@ -20,7 +19,7 @@ items.update(mp_itms)
 items.update(wizard_tomes)
 items.update(warrior_tomes)
 
-class Stats:
+class Item:
     
     def __init__(self, name, typ=None, cat=None, stats=1, mana=1):
         self.name = name
