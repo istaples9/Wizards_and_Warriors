@@ -43,6 +43,10 @@ class Warrior(Player):
             description = "Block+"
             return description
         
+class Enemy(Player):
+    
+    print("enemy")
+        
 
 
 

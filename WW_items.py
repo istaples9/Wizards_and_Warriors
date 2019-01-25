@@ -5,12 +5,12 @@ Created on Tue Jan  8 19:05:14 2019
 @author: owner
 """
 
-atk_itms = {1: "Hammer", 2: "Staff"}
-def_itms = {3: "Wooden Shield", 4: "Helmet"}
-hp_itms = {5: "Apple Pie", 6: "Snickers Bar"}
-mp_itms = {7: "Minor Mana Potion", 8: "Mana Potion"}
-wizard_tomes = {9: "FireBall", 10: "FrostBite"}
-warrior_tomes = {11: "HeavyBlow", 12: "Fortify"}
+atk_itms = {1: "Hammer", 2: "Staff", 3: "Wand"}
+def_itms = {4: "Wooden Shield", 5: "Helmet", 6: "Cape"}
+hp_itms = {7: "Apple Pie", 8: "Snickers Bar", 9: "Health Potion"}
+mp_itms = {10: "Minor Mana Potion", 11: "Mana Potion", 12: "Witches Brew"}
+wizard_tomes = {13: "FireBall", 14: "FrostBite"}
+warrior_tomes = {15: "HeavyBlow", 16: "Fortify"}
 
 items = atk_itms.copy()
 items.update(def_itms)
