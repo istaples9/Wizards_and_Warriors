@@ -25,12 +25,13 @@ def newGame():
     if plyr_class not in WW_classes.classes:
         print("\n", "Invalid class.")
         return newGame()
-    plyr = input("Name your character: ")
+    name = input("Name your character: ")
     plyr_class = WW_classes.classes[plyr_class]
     if plyr_class == "Wizard":
-        plyr = WW_classes.Wizard(plyr)
+        plyr = WW_classes.Wizard(name)
     if plyr_class == "Warrior":
-        plyr = WW_classes.Warrior(plyr)
+        plyr = WW_classes.Warrior(name)
+    plyr.name = name
     plyr.clss = plyr_class
     story()
     
@@ -122,23 +123,27 @@ def swap(item):
     plyr_cat = getattr(plyr, item.cat)
     plyr_cat = plyr_cat.copy()
     for e in plyr_cat:
-        choice = input("Enter (1) to swap for " + str(e) + ", enter (N) for next item: ")
-        if choice == '1':
-            for obj in gc.get_objects():
-                if isinstance(obj, WW_items.Item):
-                     if obj.name == e:
-                         print(obj.name, obj.stats)
-                         use(obj)
-                         equip(item)
-                         break
+        drop_item = e
+        suffix = ", Enter nothing for next item:"
+        if item.name in plyr_cat :
+            drop_item = item.name
+            suffix = ". Only one of each item allowed, enter (P) to pass: "
+        to_swap = input("Enter (1) to swap for " + str(drop_item) + suffix)
+        if to_swap == '1':
+            if drop_item in plyr.inventory:
+                plyr.inventory.pop(drop_item)
+            else:
+                for obj in gc.get_objects():
+                    if isinstance(obj, WW_items.Item):
+                         if obj.name == drop_item:
+                             use(obj)
+            equip(item)
+            break
         else:
-            print("next")              
+            pass
+    print("\n" + "No items left")              
     
-    
-            
-            
-    
-    
+
     
 def battle(enemy):
     print("Enemy encountered!")

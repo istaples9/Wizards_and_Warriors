@@ -7,8 +7,9 @@ Created on Mon Jan  7 21:28:44 2019
 
 classes = {1: "Wizard", 2: "Warrior"}
 
-class Player:
-    def __init__(self, name, clss=None, hp=5, mp=5, dmg=0, block=0, equipment={}, skills={}, inventory={}):
+class Char:
+    
+    def __init__(self, name, clss=None, hp=0, mp=0, dmg=0, block=0, equipment={}, skills={}, inventory={}):
         self.name = name
         self.clss = clss
         self.hp = hp
@@ -20,9 +21,12 @@ class Player:
         self.inventory = inventory
     
         
-class Wizard(Player):
+class Wizard(Char):
     
+    def __init__(self, Player):
+        super().__init__(self, hp=5, mp=10)
     
+        
     def attack(skill):
         description = ""
         if str(skill) == 'FireBall':
@@ -33,7 +37,11 @@ class Wizard(Player):
             return description
     
                  
-class Warrior(Player):
+class Warrior(Char):
+    
+    def __init__(self, Player):
+        super().__init__(self, hp=10, mp=5)
+       
          
     def attack(skill):
         if str(skill) == 'HeavyBlow':
@@ -43,9 +51,10 @@ class Warrior(Player):
             description = "Block+"
             return description
         
-class Enemy(Player):
+class Goblin(Char):
     
-    print("enemy")
+    def __init__(self, Player):
+        super().__init__(self, hp=5, mp=5, dmg=2, block=1)
         
 
 
