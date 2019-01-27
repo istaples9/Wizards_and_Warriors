@@ -12,16 +12,13 @@ import numpy as np
 
 def newGame():
     global plyr
-    try:
-        plyr_class = int(input("Choose class, enter(1) for Wizard and (2) for Warrior:"))
-    except:
-        print("\n", "Invalid class.")
-        return newGame()
-    if plyr_class not in WW_classes.classes:
-        print("\n", "Invalid class.")
-        return newGame()
-    name = input("Name your character: ")
-    plyr_class = WW_classes.classes[plyr_class]
+    plyr_class = ""
+    while plyr_class not in ['1', '2']:
+        plyr_class = input("Choose class, enter(1) for Wizard and (2) for Warrior:")
+    name = ""
+    while len(name) == 0:
+        name = input("Name your character: ")
+    plyr_class = WW_classes.classes[int(plyr_class)]
     if plyr_class == "Wizard":
         plyr = WW_classes.Wizard(name)
     if plyr_class == "Warrior":
@@ -32,32 +29,39 @@ def newGame():
     
     
 def show_stats(char):
-    print("\n", char.name, "|", char.clss, "|", "HP:", char.hp, "|", "MP:", char.mp, "|", "Dmg:", char.dmg, "|", "Block:", char.block)
-    cats = ['skills', 'equipment', 'inventory']
-    for cat in cats:
-        items = []
-        char_cat = getattr(char, cat)
-        for e in char_cat:
-            if cat == 'skills':
-                items.append([f" {e.name}, {e.typ}:{e.stat}, Mana Cost:{e.mana_cost}, Cool Down:{e.cool_down}"])
-            elif cat == 'equipment':
-                items.append([f" {e.name}, {e.typ}:{e.stat}"])
-            elif cat == 'inventory':
-                items.append([f" {e.name}, {e.typ}:{e.stat}"])
-        print(f"{cat.capitalize()}: {items}")
+    if char.clss not in WW_classes.classes.values():
+        print("\n", char.clss, "|", "HP:", char.hp)
+    else:
+        print("\n", char.name, "|", char.clss, "|", "HP:", char.hp, "|", "MP:", char.mp, "|", "Dmg:", char.dmg, "|", "Block:", char.block)
+        cats = ['skills', 'equipment', 'inventory']
+        for cat in cats:
+            items = []
+            char_cat = getattr(char, cat)
+            for e in char_cat:
+                if cat == 'skills':
+                    items.append([f" {e.name}, {e.typ}:{e.stat}, Mana Cost:{e.mana_cost}, Cool Down:{e.cool_down}"])
+                elif cat == 'equipment':
+                    items.append([f" {e.name}, {e.typ}:{e.stat}"])
+                elif cat == 'inventory':
+                    items.append([f" {e.name}, {e.typ}:{e.stat}"])
+            print(f"{cat.capitalize()}: {items}")
         
 def loot():
     loot_item = np.random.choice(WW_items.items)
     WW_items.item_info(loot_item)
-    pick_up = int(input(f"Enter (1) to equip {loot_item['name']} or (P) to pass:"))
-    if pick_up == 1:
+    pick_up = ""
+    while pick_up.upper() not in ['Y', 'C']:
+        pick_up = input(f"Enter (Y) to equip {loot_item['name']}, or (C) to cancel:")
+    if pick_up.upper() == 'Y':
         item = WW_items.Item(loot_item)
         for key in loot_item:
             setattr(item, key, loot_item[key])
         equip(item)
-    else:
-        loot()
+    elif pick_up.upper() == 'C':
+        pass
+
         
+    
     
 def equip(item):
     plyr_cat = getattr(plyr, item.cat)
@@ -65,22 +69,19 @@ def equip(item):
         swap(item)
     else:
         if item.cat == 'skills':
-            if item.name in plyr.skills:
-                swap(item)
-            elif item.clss == "wiz" and plyr.clss == "Wizard":
-                plyr_cat.append(item)
-            elif item.clss == "war" and plyr.clss == "Warrior":
+            if item.clss == plyr.clss:
                 plyr_cat.append(item)
             else: 
                 print("\n" + "Wrong class")
         elif item.cat == 'equipment':
+            if item.clss == plyr.clss:
+                print("25% bonus for matching class.")
+                item.stat *= 1.25
             setattr(plyr, item.typ, getattr(plyr, item.typ) + item.stat)
             plyr_cat.append(item)
         elif item.cat == 'inventory':
-            plyr_cat.append(item)
-        
+            plyr_cat.append(item)  
     show_stats(plyr)
-    loot()
     
     
     
@@ -95,7 +96,7 @@ def swap(item):
     plyr_cat = getattr(plyr, item.cat)
     plyr_cat_copy = plyr_cat.copy()
     for e in plyr_cat_copy:
-        to_swap = input("Enter (1) to swap out " + e.name + ", Enter (P) to pass:")
+        to_swap = input("Enter (1) to swap out " + e.name + ", Enter (C) to cancel:")
         if to_swap == '1':
             if item.cat == 'equipment':
                 use(e)
@@ -108,11 +109,10 @@ def swap(item):
 
     
 def battle(enemy):
-    print("Enemy encountered!")
-    
-    #show enemy stats
+    print("\n", "Enemy encountered!")
+    show_stats(enemy)
      
-
+ 
     
          
 def roll(die):
@@ -123,7 +123,7 @@ def roll(die):
 ###STORY###
 def story():
     loot()
-    #battle()
+    battle(WW_classes.Goblin('Goblin'))
     
     
 newGame()

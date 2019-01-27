@@ -23,38 +23,22 @@ class Char:
         
 class Wizard(Char):
     
-    def __init__(self, Player):
+    def __init__(self, Char):
         super().__init__(self, hp=5, mp=10)
     
         
-    def attack(skill):
-        description = ""
-        if str(skill) == 'FireBall':
-            description = "Burn Dmg:"
-            return description
-        if str(skill) == 'FrostBite':
-            description = "Freeze:"
-            return description
-    
                  
 class Warrior(Char):
     
-    def __init__(self, Player):
+    def __init__(self, Char):
         super().__init__(self, hp=10, mp=5)
        
          
-    def attack(skill):
-        if str(skill) == 'HeavyBlow':
-            description = "Stun: "
-            return description
-        if str(skill) == 'Fortify':
-            description = "Block+"
-            return description
         
 class Goblin(Char):
     
-    def __init__(self, Player):
-        super().__init__(self, hp=5, mp=5, dmg=2, block=1)
+    def __init__(self, Char):
+        super().__init__(self, clss='Goblin', hp=4, mp=3, dmg=2, block=1)
         
 
 
