@@ -9,7 +9,7 @@ classes = {1: "Wizard", 2: "Warrior"}
 
 class Char:
     
-    def __init__(self, name, clss=None, hp=0, mp=0, dmg=0, block=0, equipment={}, skills={}, inventory={}):
+    def __init__(self, name, clss=None, hp=0, mp=0, dmg=0, block=0, equipment=[], skills=[], inventory=[]):
         self.name = name
         self.clss = clss
         self.hp = hp

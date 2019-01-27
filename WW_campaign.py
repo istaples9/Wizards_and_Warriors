@@ -6,7 +6,8 @@ Created on Tue Jan  8 19:11:32 2019
 """
 import WW_classes
 import WW_items
-from random import randint 
+from random import randint
+import numpy as np
 import gc
 
 
@@ -38,109 +39,75 @@ def newGame():
     
 def show_stats(char):
     print("\n", char.name, "|", char.clss, "|", "HP:", char.hp, "|", "MP:", char.mp, "|", "Dmg:", char.dmg, "|", "Block:", char.block)
-    print("Skills: ", char.skills)
-    print("Equipment: ", char.equipment)
-    print("Inventory: ", char.inventory)
+    cats = [char.skills, char.equipment, char.inventory]
+    for cat in cats:
+        item = [(e.name, e.typ, e.stat) for e in cat]
+        print(item)
+    
+    
     
     
 def loot():
-    global skill_type
-    n = len(WW_items.items) - 1
-    name = WW_items.items[roll(n)]
-    item = WW_items.Item(name)
-    item.name = name
-    item.stats = roll(tier[1])
-    if item.name in WW_items.atk_itms.values():
-        item.typ = 'dmg'
-        item.cat = 'equipment'
-        print("\n", item.name, "|", "Dmg:", item.stats)
-    elif item.name in WW_items.def_itms.values():
-        item.typ = 'block'
-        item.cat = 'equipment'
-        print("\n", item.name, "|", "Block:", item.stats)
-    elif item.name in WW_items.hp_itms.values():
-        item.typ = 'hp'
-        item.cat = 'inventory'
-        print("\n", item.name, "|", "HP +", item.stats)
-    elif item.name in WW_items.mp_itms.values():
-        item.typ = 'mp'
-        item.cat = 'inventory'
-        print("\n", item.name, "|", "MP +", item.stats)
-    elif item.name in WW_items.wizard_tomes.values():
-        item.typ = 'wiz'
-        item.cat = 'skills'
-        skill_type = WW_classes.Wizard.attack(item.name)
-        print("\n", "Wizard Tome", "|", item.name, "|", "Mana:", item.mana, "|", skill_type, item.stats)
-    elif item.name in WW_items.warrior_tomes.values():
-        item.typ = 'war'
-        item.cat = 'skills'
-        skill_type = WW_classes.Wizard.attack(item.name)
-        print("\n", "Warrior Tome", "|", item.name, "|", "Mana:", item.mana, "|", skill_type, item.stats)
-    plyr_cat = getattr(plyr, item.cat)
-    if item.name in plyr_cat:
-        swap(item)
+    loot_item = np.random.choice(WW_items.items)
+    WW_items.item_info(loot_item)
+    pick_up = int(input("Enter (1) to equip or (P) to pass:"))
+    if pick_up == 1:
+        item = WW_items.Item(loot_item)
+        item.name = loot_item['name']   
+        item.clss = loot_item['clss'] 
+        item.description = loot_item['description'] 
+        item.typ = loot_item['typ'] 
+        item.stat = loot_item['stat'] 
+        item.mana_cost = loot_item['mana_cost'] 
+        item.cool_down = loot_item['cool_down'] 
+        item.cat = loot_item['cat']
+        equip(item)
     else:
-        choice = int(input("Enter (1) to equip item or enter nothing to cancel:"))
-        if choice == 1:
-            equip(item)
-    
+        loot()
     
 def equip(item):
     plyr_cat = getattr(plyr, item.cat)
-    if item.name in plyr_cat or len(plyr_cat) == 2:
+    if len(plyr_cat) == 2:
         swap(item)
     else:
-        if item.typ == "wiz" and plyr.clss == "Wizard":
-            plyr_cat[item.name] = ["Mana:", item.mana, skill_type, item.stats]
-        elif item.typ == "war" and plyr.clss == "Warrior":
-            plyr_cat[item.name] = ["Mana:", item.mana, skill_type, item.stats]
-        elif item.typ == 'dmg' or item.typ == 'block':
-            setattr(plyr, item.typ, getattr(plyr, item.typ) + item.stats)
-            plyr_cat[item.name] = [item.typ, item.stats]
-        elif item.typ == 'hp' or item.typ == 'mp':
-            plyr_cat[item.name] = [item.typ, item.stats]
-        else: 
-            print("\n" + "Wrong class")
+        print(item.typ)
+        if item.cat == 'skills':
+            if item.clss == "wiz" and plyr.clss == "Wizard":
+                plyr_cat.append(item)
+            elif item.clss == "war" and plyr.clss == "Warrior":
+                plyr_cat.append(item)
+            else: 
+                print("\n" + "Wrong class")
+        elif item.cat == 'equipment':
+            setattr(plyr, item.typ, getattr(plyr, item.typ) + item.stat)
+            plyr_cat.append(item)
+        elif item.cat == 'inventory':
+            plyr_cat.append(item)
+    
     show_stats(plyr)
     loot()
     
     
     
 def use(item):
-    if item.name in plyr.skills:
-        plyr.skills.pop(item.name)
-    elif item.name in plyr.equipment:
-        setattr(plyr, item.typ, getattr(plyr, item.typ) - item.stats)
-        plyr.equipment.pop(item.name)
-    elif item.name in plyr.inventory:
-        setattr(plyr, item.typ, getattr(plyr, item.typ) + item.stats)
-        plyr.inventory.pop(item.name)
-    else:  
-        print("Not in pack")
+    plyr_cat = getattr(plyr, item.cat)
+    setattr(plyr, item.typ, getattr(plyr, item.typ) - item.stat)
+    plyr_cat.remove(item)
     
 
 def swap(item):
+    print("\n" + "Only two items can fit in this slot.")
     plyr_cat = getattr(plyr, item.cat)
-    plyr_cat = plyr_cat.copy()
-    for e in plyr_cat:
-        drop_item = e
-        suffix = ", Enter nothing for next item:"
-        if item.name in plyr_cat :
-            drop_item = item.name
-            suffix = ". Only one of each item allowed, enter (P) to pass: "
-        to_swap = input("Enter (1) to swap for " + str(drop_item) + suffix)
+    plyr_cat_copy = plyr_cat.copy()
+    for e in plyr_cat_copy:
+        to_swap = input("Enter (1) to swap out " + e.name + ", Enter (P) to pass:")
         if to_swap == '1':
-            if drop_item in plyr.inventory:
-                plyr.inventory.pop(drop_item)
+            if item.cat == 'equipment':
+                use(e)
             else:
-                for obj in gc.get_objects():
-                    if isinstance(obj, WW_items.Item):
-                         if obj.name == drop_item:
-                             use(obj)
+                plyr_cat.remove(e)
             equip(item)
             break
-        else:
-            pass
     print("\n" + "No items left")              
     
 
@@ -153,8 +120,8 @@ def battle(enemy):
 
     
          
-def roll(n):
-    return randint(1, n)
+def roll(die):
+    return randint(1, die)
    
              
 
