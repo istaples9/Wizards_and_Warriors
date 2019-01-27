@@ -10,7 +10,6 @@ hammer = {'name': 'Hammer',
           'description': 'Rusty blacksmith hammer',
           'typ': 'dmg',
           'stat': 3,
-          'mana_cost': 0,
           'cool_down': 1,
           'cat': 'equipment'
          }
@@ -20,7 +19,6 @@ wooden_shield = {'name': 'Wooden Shield',
                  'description': 'Old and rotted shield',
                  'typ': 'block',
                  'stat': 2,
-                 'mana_cost': 0,
                  'cool_down': 1,
                  'cat': 'equipment'
                 }
@@ -30,7 +28,6 @@ helmet = {'name': 'Helmet',
           'description': 'Dented helmet',
           'typ': 'block',
           'stat': 1,
-          'mana_cost': 0,
           'cool_down': 1,
           'cat': 'equipment'
          }
@@ -40,7 +37,6 @@ staff = {'name': 'Staff',
          'description': 'Long, ergonomic stick',
          'typ': 'dmg',
          'stat': 2,
-         'mana_cost': 0,
          'cool_down': 1,
          'cat': 'equipment'
         }
@@ -50,7 +46,6 @@ wand = {'name': 'Wand',
         'description': 'Long, ergonomic stick',
         'typ': 'dmg',
         'stat': 1,
-        'mana_cost': 0,
         'cool_down': 1,
         'cat': 'equipment'
        }
@@ -60,8 +55,6 @@ minor_mana_potion = {'name': 'Minor Mana Potion',
                      'description': 'Increases player mana.',
                      'typ': 'mp',
                      'stat': 1,
-                     'mana_cost': 0,
-                     'cool_down': 0,
                      'cat': 'inventory'
                     }
 
@@ -70,8 +63,6 @@ minor_health_potion = {'name': 'Minor Health Potion',
                        'description': 'Increases player health.',
                        'typ': 'hp',
                        'stat': 1,
-                       'mana_cost': 0,
-                       'cool_down': 0,
                        'cat': 'inventory'
                       }
 
@@ -110,7 +101,7 @@ items = [hammer, wooden_shield, helmet, staff, wand, minor_mana_potion, minor_he
 
 def item_info(item):
     print("\n")
-    print(f"{item['name']}, {item['typ']}:{item['stat']}, mana cost:{item['mana_cost']}, cool down:{item['cool_down']}")
+    print(f"{item['name']}, {item['typ']}:{item['stat']}")
     print(f"Description: {item['description']}")
     
     
@@ -123,7 +114,7 @@ class Item:
         self.clss = clss
         self.description = description
         self.typ = typ
-        self.stats = stat
+        self.stat = stat
         self.mana_cost = mana_cost
         self.cool_down = cool_down
         self.cat = cat

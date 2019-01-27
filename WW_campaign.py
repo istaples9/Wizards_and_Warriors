@@ -8,12 +8,6 @@ import WW_classes
 import WW_items
 from random import randint
 import numpy as np
-import gc
-
-
-loot_ops = {0: "You found a tresure chest!"}
-
-tier = {1: 4}
 
 
 def newGame():
@@ -39,40 +33,41 @@ def newGame():
     
 def show_stats(char):
     print("\n", char.name, "|", char.clss, "|", "HP:", char.hp, "|", "MP:", char.mp, "|", "Dmg:", char.dmg, "|", "Block:", char.block)
-    cats = [char.skills, char.equipment, char.inventory]
+    cats = ['skills', 'equipment', 'inventory']
     for cat in cats:
-        item = [(e.name, e.typ, e.stat) for e in cat]
-        print(item)
-    
-    
-    
-    
+        items = []
+        char_cat = getattr(char, cat)
+        for e in char_cat:
+            if cat == 'skills':
+                items.append([f" {e.name}, {e.typ}:{e.stat}, Mana Cost:{e.mana_cost}, Cool Down:{e.cool_down}"])
+            elif cat == 'equipment':
+                items.append([f" {e.name}, {e.typ}:{e.stat}"])
+            elif cat == 'inventory':
+                items.append([f" {e.name}, {e.typ}:{e.stat}"])
+        print(f"{cat.capitalize()}: {items}")
+        
 def loot():
     loot_item = np.random.choice(WW_items.items)
     WW_items.item_info(loot_item)
-    pick_up = int(input("Enter (1) to equip or (P) to pass:"))
+    pick_up = int(input(f"Enter (1) to equip {loot_item['name']} or (P) to pass:"))
     if pick_up == 1:
         item = WW_items.Item(loot_item)
-        item.name = loot_item['name']   
-        item.clss = loot_item['clss'] 
-        item.description = loot_item['description'] 
-        item.typ = loot_item['typ'] 
-        item.stat = loot_item['stat'] 
-        item.mana_cost = loot_item['mana_cost'] 
-        item.cool_down = loot_item['cool_down'] 
-        item.cat = loot_item['cat']
+        for key in loot_item:
+            setattr(item, key, loot_item[key])
         equip(item)
     else:
         loot()
+        
     
 def equip(item):
     plyr_cat = getattr(plyr, item.cat)
     if len(plyr_cat) == 2:
         swap(item)
     else:
-        print(item.typ)
         if item.cat == 'skills':
-            if item.clss == "wiz" and plyr.clss == "Wizard":
+            if item.name in plyr.skills:
+                swap(item)
+            elif item.clss == "wiz" and plyr.clss == "Wizard":
                 plyr_cat.append(item)
             elif item.clss == "war" and plyr.clss == "Warrior":
                 plyr_cat.append(item)
@@ -83,7 +78,7 @@ def equip(item):
             plyr_cat.append(item)
         elif item.cat == 'inventory':
             plyr_cat.append(item)
-    
+        
     show_stats(plyr)
     loot()
     
