@@ -25,6 +25,7 @@ def newGame():
         plyr = WW_classes.Warrior(name)
     plyr.name = name
     plyr.clss = plyr_class
+    show_stats(plyr)
     story()
     
     
@@ -66,6 +67,10 @@ def loot():
 def equip(item):
     plyr_cat = getattr(plyr, item.cat)
     if len(plyr_cat) == 2:
+        print("\n", "Only two items can fit in this slot.")
+        swap(item)
+    elif item in plyr.skills:
+        print("Only one of each skill allowed.")
         swap(item)
     else:
         if item.cat == 'skills':
@@ -75,14 +80,13 @@ def equip(item):
                 print("\n" + "Wrong class")
         elif item.cat == 'equipment':
             if item.clss == plyr.clss:
-                print("25% bonus for matching class.")
+                print("25% bonus for matching equipment class.")
                 item.stat *= 1.25
             setattr(plyr, item.typ, getattr(plyr, item.typ) + item.stat)
             plyr_cat.append(item)
         elif item.cat == 'inventory':
             plyr_cat.append(item)  
     show_stats(plyr)
-    
     
     
 def use(item):
@@ -92,31 +96,48 @@ def use(item):
     
 
 def swap(item):
-    print("\n" + "Only two items can fit in this slot.")
     plyr_cat = getattr(plyr, item.cat)
-    plyr_cat_copy = plyr_cat.copy()
-    for e in plyr_cat_copy:
-        to_swap = input("Enter (1) to swap out " + e.name + ", Enter (C) to cancel:")
-        if to_swap == '1':
-            if item.cat == 'equipment':
-                use(e)
-            else:
-                plyr_cat.remove(e)
-            equip(item)
-            break
-    print("\n" + "No items left")              
+    swap_num = ""
+    for i in range(len(plyr_cat)):
+        cat_item = getattr(plyr_cat[i], 'name')
+        swap_num += (f"Enter ({i+1}) to swap for ({cat_item}), ")
+    inputs = [str(i) for i in range(1, len(plyr_cat)+1)]
+    swap_index = ""
+    while swap_index not in inputs:
+        swap_index = input(swap_num)
+    swap_item = plyr_cat[int(swap_index)-1]
+    if item.cat == 'equipment':
+        use(swap_item)
+    else:
+        plyr_cat.remove(swap_item)
+    equip(item)
     
-
+    
     
 def battle(enemy):
     print("\n", "Enemy encountered!")
     show_stats(enemy)
+    turn = roll(2)
+    action = ""
+    if turn == 1:
+        while action not in ['1', '2', '3']:
+            action = input("\n" + "Your turn! Enter (1) to use a skill, (2) to use a physical attack, or (3) to use an item: ")
+        if action == '1' and len(plyr.skills) > 0:
+            print(f"Enter (1) for {plyr.skills[0]}")
+        elif action == '2':
+            print("attack")
+        elif action == '3' and len(plyr.inventory) > 0:
+            print(plyr.inventory)
+        else:
+            print("Attacking is your only option:")
+    else:
+        print("\n", "Enemy turn:")
      
  
     
          
 def roll(die):
-    return randint(1, die)
+    return randint(1, die+1)
    
              
 
