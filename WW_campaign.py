@@ -47,6 +47,7 @@ def show_stats(char):
                     items.append([f" {e.name}, {e.typ}:{e.stat}"])
             print(f"{cat.capitalize()}: {items}")
         
+        
 def loot():
     loot_item = np.random.choice(WW_items.items)
     WW_items.item_info(loot_item)
@@ -61,8 +62,6 @@ def loot():
     elif pick_up.upper() == 'C':
         pass
 
-        
-    
     
 def equip(item):
     plyr_cat = getattr(plyr, item.cat)
@@ -87,12 +86,43 @@ def equip(item):
         elif item.cat == 'inventory':
             plyr_cat.append(item)  
     show_stats(plyr)
+    battle(WW_classes.Goblin('Goblin'))
+    loot()
     
     
-def use(item):
-    plyr_cat = getattr(plyr, item.cat)
-    setattr(plyr, item.typ, getattr(plyr, item.typ) - item.stat)
-    plyr_cat.remove(item)
+def use(item=None, battle=False):
+    if battle==True:
+        pack = [cat for cat in ["skills", "inventory"] if len(getattr(plyr, cat)) > 0]
+        choose_cat = ""
+        for i in range(len(pack)):
+            cat = pack[i]
+            choose_cat += (f"Enter ({i+1}) to use {cat.capitalize()}, ")
+        inputs = [str(i) for i in range(1, len(pack)+1)]
+        inputs += ["c", "C"]
+        use_index = ""
+        while use_index not in inputs:
+            use_index = input(choose_cat + "or (C) to cancel: ")
+        if use_index.upper() == "C":
+            pass
+        else:
+            use_cat = getattr(plyr, pack[int(use_index)-1])
+            choose_item = ""
+            for i in range(len(use_cat)):
+                choose_item += (f"Enter ({i+1}) to use {getattr(use_cat[i], 'name')}, ")
+            inputs = [str(i) for i in range(1, len(use_cat)+1)]
+            inputs += ["c", "C"]
+            use_index = ""
+            while use_index not in inputs:
+                use_index = input(choose_item + "or (C) to cancel: ")
+            if use_index.upper() == "C":
+                pass
+            else:
+                item = use_cat[int(use_index)-1]
+                use(item)
+    else:
+        plyr_cat = getattr(plyr, item.cat)
+        setattr(plyr, item.typ, getattr(plyr, item.typ) - item.stat)
+        plyr_cat.remove(item)
     
 
 def swap(item):
@@ -102,15 +132,19 @@ def swap(item):
         cat_item = getattr(plyr_cat[i], 'name')
         swap_num += (f"Enter ({i+1}) to swap for ({cat_item}), ")
     inputs = [str(i) for i in range(1, len(plyr_cat)+1)]
+    inputs += ["c", "C"]
     swap_index = ""
     while swap_index not in inputs:
-        swap_index = input(swap_num)
-    swap_item = plyr_cat[int(swap_index)-1]
-    if item.cat == 'equipment':
-        use(swap_item)
+        swap_index = input(swap_num + "(C) to cancel: ")
+    if swap_index.upper() == "C":
+        pass
     else:
-        plyr_cat.remove(swap_item)
-    equip(item)
+        swap_item = plyr_cat[int(swap_index)-1]
+        if item.cat == 'equipment':
+            use(swap_item)
+        else:
+            plyr_cat.remove(swap_item)
+        equip(item)
     
     
     
@@ -118,18 +152,8 @@ def battle(enemy):
     print("\n", "Enemy encountered!")
     show_stats(enemy)
     turn = roll(2)
-    action = ""
-    if turn == 1:
-        while action not in ['1', '2', '3']:
-            action = input("\n" + "Your turn! Enter (1) to use a skill, (2) to use a physical attack, or (3) to use an item: ")
-        if action == '1' and len(plyr.skills) > 0:
-            print(f"Enter (1) for {plyr.skills[0]}")
-        elif action == '2':
-            print("attack")
-        elif action == '3' and len(plyr.inventory) > 0:
-            print(plyr.inventory)
-        else:
-            print("Attacking is your only option:")
+    if turn < 4:
+        use(None, True)
     else:
         print("\n", "Enemy turn:")
      

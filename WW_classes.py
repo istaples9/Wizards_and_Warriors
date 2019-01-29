@@ -6,6 +6,7 @@ Created on Mon Jan  7 21:28:44 2019
 """
 
 classes = {1: "Wizard", 2: "Warrior"}
+pack_slots = ["skills", "equipment", "inventory"]
 
 class Char:
     
