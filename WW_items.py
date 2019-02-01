@@ -57,7 +57,7 @@ minor_mana_potion = {'name': 'Minor Mana Potion',
                      'clss': None,
                      'description': 'Increases player mana on use.',
                      'typ': 'mp',
-                     'stat': 1,
+                     'stat': 2,
                      'cat': 'inventory'
                     }
 
@@ -65,7 +65,7 @@ minor_health_potion = {'name': 'Minor Health Potion',
                        'clss': None,
                        'description': 'Increases player health on use.',
                        'typ': 'hp',
-                       'stat': 1,
+                       'stat': 2,
                        'cat': 'inventory'
                       }
 
@@ -73,21 +73,21 @@ heavy_blow = {'name': 'Heavy Blow',
               'clss': 'Warrior',
               'description': 'Smashes enemies',
               'typ': 'dmg',
-              'stat': 3,
+              'stat': 4,
               'mana_cost': 1,
               'cool_down': 1,
               'cat': 'skills'
              }
 
-fortify = {'name': 'Heavy Blow',
-              'clss': 'Warrior',
-              'description': 'Smashes enemies',
-              'typ': 'block',
-              'stat': 3,
-              'mana_cost': 1,
-              'cool_down': 1,
-              'cat': 'skills'
-             }
+fortify = {'name': 'Fortify',
+           'clss': 'Warrior',
+           'description': 'Increases block',
+           'typ': 'block',
+           'stat': 3,
+           'mana_cost': 1,
+           'cool_down': 1,
+           'cat': 'skills'
+          }
 
 frost_bite = {'name': 'Frost Bite',
               'clss': 'Wizard',
@@ -100,14 +100,14 @@ frost_bite = {'name': 'Frost Bite',
              }
 
 ice_shell = {'name': 'Ice Shell',
-              'clss': 'Wizard',
-              'description': 'Casts a frosty armor around yourself',
-              'typ': 'block',
-              'stat': 3,
-              'mana_cost': 3,
-              'cool_down': 1,
-              'cat': 'skills'
-             }
+             'clss': 'Wizard',
+             'description': 'Casts a frosty armor around yourself',
+             'typ': 'block',
+             'stat': 3,
+             'mana_cost': 3,
+             'cool_down': 1,
+             'cat': 'skills'
+            }
 
 items = [hammer, wooden_shield, helmet, cape, staff, wand, minor_mana_potion, minor_health_potion, heavy_blow, fortify, frost_bite, ice_shell]
 

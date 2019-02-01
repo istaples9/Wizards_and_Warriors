@@ -8,7 +8,8 @@ import WW_classes
 import WW_items
 from random import randint
 import numpy as np
-
+import time
+import os
 
 def newGame():
     global plyr
@@ -30,6 +31,7 @@ def newGame():
     
     
 def show_stats(char):
+    #clear()
     if char.clss not in WW_classes.classes.values():
         print("\n", char.clss, "|", "HP:", char.hp)
     else:
@@ -86,12 +88,11 @@ def equip(item):
         elif item.cat == 'inventory':
             plyr_cat.append(item)  
     show_stats(plyr)
-    battle(WW_classes.Goblin('Goblin'))
-    loot()
     
     
-def use(item=None, battle=False):
-    if battle==True:
+    
+def use(item, enemy = None):
+    if item == None:
         pack = [cat for cat in ["skills", "inventory"] if len(getattr(plyr, cat)) > 0]
         choose_cat = ""
         for i in range(len(pack)):
@@ -103,7 +104,7 @@ def use(item=None, battle=False):
         while use_index not in inputs:
             use_index = input(choose_cat + "or (C) to cancel: ")
         if use_index.upper() == "C":
-            pass
+            turn.turn += 1
         else:
             use_cat = getattr(plyr, pack[int(use_index)-1])
             choose_item = ""
@@ -118,11 +119,27 @@ def use(item=None, battle=False):
                 pass
             else:
                 item = use_cat[int(use_index)-1]
-                use(item)
+                use(item, enemy)
     else:
-        plyr_cat = getattr(plyr, item.cat)
+        print(item.typ)
+        if item.cat != 'equipment':
+            if item.typ == 'stun':
+                print("\n" + f"Enemy stunned for {item.stat} turn!")
+                turn.turn += 1
+            elif item.typ == 'dmg':
+                print(f"strikes enemy for {item.stat} damage!")
+                enemy.hp -= item.stat
+            else:
+                setattr(plyr, item.typ, getattr(plyr, item.typ) + item.stat)
+        drop(item)
+
+
+
+def drop(item):
+    if item.cat == 'equipment':
         setattr(plyr, item.typ, getattr(plyr, item.typ) - item.stat)
-        plyr_cat.remove(item)
+    plyr_cat = getattr(plyr, item.cat)
+    plyr_cat.remove(item)
     
 
 def swap(item):
@@ -141,7 +158,7 @@ def swap(item):
     else:
         swap_item = plyr_cat[int(swap_index)-1]
         if item.cat == 'equipment':
-            use(swap_item)
+            drop(swap_item)
         else:
             plyr_cat.remove(swap_item)
         equip(item)
@@ -149,24 +166,58 @@ def swap(item):
     
     
 def battle(enemy):
-    print("\n", "Enemy encountered!")
-    show_stats(enemy)
-    turn = roll(2)
-    if turn < 4:
-        use(None, True)
+    global turn
+    print("\n", f"{enemy.clss} encountered!")
+    turn = Turn()
+    turn.turn = roll(1)
+    while enemy.hp > 0 and plyr.hp > 0:
+        show_stats(plyr)
+        show_stats(enemy)
+        if turn.turn % 2 == 0:
+            print("\n" + "Your turn:")
+            move = ""
+            inputs = ['1', '2']
+            while move not in inputs:
+                move = input("\n" + "Enter (1) to use physical attack, enter (2) to use item/skill:")
+            if move == '1':
+                enemy.hp -= plyr.dmg
+            else:
+                use(None, enemy)
+            turn.turn += 1
+        else:
+            print("\n" + "Enemy turn...")
+            time.sleep(1)
+            print(f"Enemy strikes for {enemy.dmg} Dmg!")
+            plyr.block -= enemy.dmg
+            if plyr.block < 0:
+                plyr.hp += plyr.block
+                plyr.block = 0
+            turn.turn += 1
     else:
-        print("\n", "Enemy turn:")
-     
- 
-    
+        if enemy.hp <= 0:
+            print("\n" + f"{enemy.clss} destroyed! You won an item: ")
+            loot()
+        else:
+            print("\n" + "You lose! game over.")
+            
+            
+        
+class Turn: 
+    def __init__(self, turn = 0):
+        self.turn = turn
+
          
 def roll(die):
-    return randint(1, die+1)
+    return randint(0, die+1)
    
+def clear():
+    os.system( 'cls' )
              
 
 ###STORY###
 def story():
+    loot()
+    loot() 
     loot()
     battle(WW_classes.Goblin('Goblin'))
     

@@ -10,7 +10,7 @@ pack_slots = ["skills", "equipment", "inventory"]
 
 class Char:
     
-    def __init__(self, name, clss=None, hp=0, mp=0, dmg=0, block=0, equipment=[], skills=[], inventory=[]):
+    def __init__(self, name, clss=None, hp=0, mp=0, dmg=2, block=0, equipment=[], skills=[], inventory=[]):
         self.name = name
         self.clss = clss
         self.hp = hp
@@ -39,7 +39,7 @@ class Warrior(Char):
 class Goblin(Char):
     
     def __init__(self, Char):
-        super().__init__(self, clss='Goblin', hp=4, mp=3, dmg=2, block=1)
+        super().__init__(self, clss='Goblin', hp=7, mp=3, dmg=2, block=1)
         
 
 
