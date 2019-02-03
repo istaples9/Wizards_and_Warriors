@@ -4,15 +4,16 @@ Created on Mon Jan  7 21:28:44 2019
 
 @author: owner
 """
-
 classes = {1: "Wizard", 2: "Warrior"}
-pack_slots = ["skills", "equipment", "inventory"]
+
 
 class Char:
     
-    def __init__(self, name, clss=None, hp=0, mp=0, dmg=2, block=0, equipment=[], skills=[], inventory=[]):
+    def __init__(self, name, clss=None, lvl=0, exp=0, hp=0, mp=0, dmg=2, block=0, equipment=[], skills=[], inventory=[]):
         self.name = name
         self.clss = clss
+        self.lvl = lvl
+        self.exp = exp
         self.hp = hp
         self.mp = mp
         self.dmg = dmg
@@ -25,21 +26,38 @@ class Char:
 class Wizard(Char):
     
     def __init__(self, Char):
-        super().__init__(self, hp=5, mp=10)
+        super().__init__(self, hp=5, mp=8)
     
         
                  
 class Warrior(Char):
     
     def __init__(self, Char):
-        super().__init__(self, hp=10, mp=5)
+        super().__init__(self, hp=8, mp=5)
        
          
         
 class Goblin(Char):
     
     def __init__(self, Char):
-        super().__init__(self, clss='Goblin', hp=7, mp=3, dmg=2, block=1)
+        super().__init__(self, clss='Goblin', hp=7, mp=3, dmg=2, block=1, exp=1.1)
+
+        
+    def club_bash(self, skill, plyr=None):
+        self.skill = "Club Bash"
+        self.skill_description = "Deals 3 Damage."
+        plyr.block -= 3
+        if plyr.block < 0:
+            plyr.hp += plyr.block
+            plyr.block = 0
+        
+    def battle_stance(self, skill, plyr=None):
+        self.skill = "Battle Stance"
+        self.skill_description = "Increases Block by 2."
+        self.block += 2
+        
+    
+    enemy_skills = ['club_bash', 'battle_stance']
         
 
 

@@ -10,6 +10,7 @@ from random import randint
 import numpy as np
 import time
 import os
+import random
 
 def newGame():
     global plyr
@@ -33,9 +34,9 @@ def newGame():
 def show_stats(char):
     #clear()
     if char.clss not in WW_classes.classes.values():
-        print("\n", char.clss, "|", "HP:", char.hp)
+        print("\n", char.clss, "|", "HP:", char.hp, "|", "Block:", char.block)
     else:
-        print("\n", char.name, "|", char.clss, "|", "HP:", char.hp, "|", "MP:", char.mp, "|", "Dmg:", char.dmg, "|", "Block:", char.block)
+        print("\n", char.name, "|", char.clss, "|", "Lvl:", char.lvl, "|", "HP:", char.hp, "|", "MP:", char.mp, "|", "Dmg:", char.dmg, "|", "Block:", char.block)
         cats = ['skills', 'equipment', 'inventory']
         for cat in cats:
             items = []
@@ -89,9 +90,8 @@ def equip(item):
             plyr_cat.append(item)  
     show_stats(plyr)
     
-    
-    
-def use(item, enemy = None):
+       
+def use(item, enemy=None):
     if item == None:
         pack = [cat for cat in ["skills", "inventory"] if len(getattr(plyr, cat)) > 0]
         choose_cat = ""
@@ -121,18 +121,19 @@ def use(item, enemy = None):
                 item = use_cat[int(use_index)-1]
                 use(item, enemy)
     else:
-        print(item.typ)
         if item.cat != 'equipment':
             if item.typ == 'stun':
                 print("\n" + f"Enemy stunned for {item.stat} turn!")
                 turn.turn += 1
             elif item.typ == 'dmg':
                 print(f"strikes enemy for {item.stat} damage!")
-                enemy.hp -= item.stat
+                enemy.block -= item.stat
+                if enemy.block < 0:
+                    enemy.hp += enemy.block
+                    enemy.block = 0
             else:
                 setattr(plyr, item.typ, getattr(plyr, item.typ) + item.stat)
         drop(item)
-
 
 
 def drop(item):
@@ -163,11 +164,11 @@ def swap(item):
             plyr_cat.remove(swap_item)
         equip(item)
     
-    
-    
+       
 def battle(enemy):
     global turn
     print("\n", f"{enemy.clss} encountered!")
+    show_stats(enemy)
     turn = Turn()
     turn.turn = roll(1)
     while enemy.hp > 0 and plyr.hp > 0:
@@ -180,41 +181,48 @@ def battle(enemy):
             while move not in inputs:
                 move = input("\n" + "Enter (1) to use physical attack, enter (2) to use item/skill:")
             if move == '1':
-                enemy.hp -= plyr.dmg
+                print("\n" + f"You hit enemy for {plyr.dmg} damage!")
+                enemy.block -= plyr.dmg
+                if enemy.block < 0:
+                    enemy.hp += enemy.block
+                    enemy.block = 0
             else:
                 use(None, enemy)
             turn.turn += 1
         else:
             print("\n" + "Enemy turn...")
             time.sleep(1)
-            print(f"Enemy strikes for {enemy.dmg} Dmg!")
-            plyr.block -= enemy.dmg
-            if plyr.block < 0:
-                plyr.hp += plyr.block
-                plyr.block = 0
+            rand_skill = random.choice(enemy.enemy_skills)
+            skill = getattr(enemy, rand_skill)
+            skill(rand_skill, plyr)
+            print(f"{enemy.clss} used {enemy.skill}!" + "\n" + f"{enemy.skill_description}")
             turn.turn += 1
     else:
         if enemy.hp <= 0:
             print("\n" + f"{enemy.clss} destroyed! You won an item: ")
+            level_up(enemy)
             loot()
         else:
             print("\n" + "You lose! game over.")
-            
-            
-        
+
+def level_up(enemy):
+    before_exp = plyr.exp
+    plyr.exp += enemy.exp
+    if int(plyr.exp) > int(before_exp):
+        print("You leveled up!")
+                   
 class Turn: 
     def __init__(self, turn = 0):
         self.turn = turn
 
          
 def roll(die):
-    return randint(0, die+1)
+    return randint(0 , die+1)
    
 def clear():
     os.system( 'cls' )
              
 
-###STORY###
 def story():
     loot()
     loot() 
