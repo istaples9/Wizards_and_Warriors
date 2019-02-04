@@ -89,7 +89,7 @@ ice_shell = {'name': 'Ice Shell',
              'lvl': 2,
              'description': 'Casts a frosty armor around yourself',
              'typ': 'block',
-             'stat': 3,
+             'stat': 4,
              'mana_cost': 3,
              'cool_down': 1,
              'cat': 'skills'
@@ -100,8 +100,8 @@ heavy_blow = {'name': 'Heavy Blow',
               'lvl': 1,
               'description': 'Smashes enemies',
               'typ': 'dmg',
-              'stat': 4,
-              'mana_cost': 1,
+              'stat': 3,
+              'mana_cost': 2,
               'cool_down': 1,
               'cat': 'skills'
              }
@@ -111,8 +111,8 @@ fortify = {'name': 'Fortify',
            'lvl': 2,
            'description': 'Increases block',
            'typ': 'block',
-           'stat': 3,
-           'mana_cost': 1,
+           'stat': 4,
+           'mana_cost': 2,
            'cool_down': 1,
            'cat': 'skills'
           }
@@ -130,7 +130,7 @@ def item_info(item):
 
 class Item:
     
-    def __init__(self, name=None, clss=None, description=None, typ=None, stat=None, mana_cost=None, cool_down=None, cat=None):
+    def __init__(self, name=None, clss=None, description=None, typ=None, stat=0, mana_cost=0, cool_down=0, cat=None):
         self.name = name
         self.clss = clss
         self.description = description

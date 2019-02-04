@@ -13,10 +13,12 @@ import os
 import random
 
 def newGame():
+    #Initiates player object and selects class.
     global plyr
     plyr_class = ""
     while plyr_class not in ['1', '2']:
         plyr_class = input("Choose class, enter(1) for Wizard and (2) for Warrior:")
+    #Names player.
     name = ""
     while len(name) == 0:
         name = input("Name your character: ")
@@ -32,6 +34,7 @@ def newGame():
     
     
 def show_stats(char):
+    #Prints player and enemy stats
     #clear()
     if char.clss not in WW_classes.classes.values():
         print("\n", char.clss, "|", "HP:", round(char.hp, 1), "|", "Block:", round(char.block, 1))
@@ -43,15 +46,14 @@ def show_stats(char):
             char_cat = getattr(char, cat)
             for e in char_cat:
                 if cat == 'skills':
-                    items.append([f" {e.name}, {e.typ}:{e.stat}, Mana Cost:{e.mana_cost}, Cool Down:{e.cool_down}"])
-                elif cat == 'equipment':
-                    items.append([f" {e.name}, {e.typ}:{e.stat}"])
-                elif cat == 'inventory':
-                    items.append([f" {e.name}, {e.typ}:{e.stat}"])
+                    items.append([f" {e.name}, {e.typ}:{round(e.stat, 2)}, Mana Cost:{round(e.mana_cost, 2)}, Cool Down:{round(e.cool_down, 2)}"])
+                else: 
+                    items.append([f" {e.name}, {e.typ}:{round(e.stat, 2)}"])
             print(f"{cat.capitalize()}: {items}")
         
         
 def loot():
+    #Selects random item from item list, calls equip function if player chooses Y.
     loot_item = np.random.choice(WW_items.items)
     WW_items.item_info(loot_item)
     pick_up = ""
@@ -64,12 +66,14 @@ def loot():
 
     
 def equip(item_skill):
+    #If item / skill passed in is not already an instance of WW_items, initiates it.
     if not isinstance(item_skill, WW_items.Item):
         item = WW_items.Item(item_skill)
         for key in item_skill:
             setattr(item, key, item_skill[key])
     else:
         item = item_skill
+    #checks if pack slot is full, if it is, swap function is called.
     plyr_cat = getattr(plyr, item.cat)
     if len(plyr_cat) == 2:
         print("\n", "Only two items can fit in this slot.")
@@ -77,16 +81,14 @@ def equip(item_skill):
     elif item in plyr.skills:
         print("Only one of each skill allowed.")
         swap(item)
+    #adds item / skill to player
     else:
         if item.cat == 'skills':
-            if item.clss == plyr.clss:
-                plyr_cat.append(item)
-            else: 
-                print("\n" + "Wrong class")
+            plyr_cat.append(item)
         elif item.cat == 'equipment':
             if item.clss == plyr.clss:
-                print("25% bonus for matching equipment class.")
-                item.stat *= 1.25
+                print("10% bonus for matching equipment class.")
+                item.stat *= 1.10
             setattr(plyr, item.typ, getattr(plyr, item.typ) + item.stat)
             plyr_cat.append(item)
         elif item.cat == 'inventory':
@@ -95,6 +97,7 @@ def equip(item_skill):
     
        
 def use(item, enemy=None):
+    #If no item / skill is passed in, player selects one from pack.
     if item == None:
         pack = [cat for cat in ["skills", "inventory"] if len(getattr(plyr, cat)) > 0]
         choose_cat = ""
@@ -123,23 +126,31 @@ def use(item, enemy=None):
             else:
                 item = use_cat[int(use_index)-1]
                 use(item, enemy)
+    #after item has been selected or passed in, enemy and player stats are adjusted based on item stats and pack category.
     else:
         if item.cat != 'equipment':
-            if item.typ == 'stun':
-                print("\n" + f"Enemy stunned for {item.stat} turn!")
-                turn.turn += 1
-            elif item.typ == 'dmg':
-                print(f"strikes enemy for {item.stat} damage!")
-                enemy.block -= item.stat
-                if enemy.block < 0:
-                    enemy.hp += enemy.block
-                    enemy.block = 0
+            if item.mana_cost <= plyr.mp:
+                if item.typ == 'stun':
+                    print("\n" + f"Enemy stunned for {item.stat} turn!")
+                    turn.turn += 1
+                elif item.typ == 'dmg':
+                    print(f"Strikes enemy for {item.stat} damage!")
+                    enemy.block -= item.stat
+                    if enemy.block < 0:
+                        enemy.hp += enemy.block
+                        enemy.block = 0
+                else:
+                    setattr(plyr, item.typ, getattr(plyr, item.typ) + item.stat)
+                plyr.mp -= item.mana_cost
             else:
-                setattr(plyr, item.typ, getattr(plyr, item.typ) + item.stat)
-        drop(item)
+                print("\n" + "Not enough mana!")
+                use(None)
+        if item.cat == 'inventory':
+            drop(item)
 
 
 def drop(item):
+    #Drops item, if item category is equipment, player stats are adjusted.
     if item.cat == 'equipment':
         setattr(plyr, item.typ, getattr(plyr, item.typ) - item.stat)
     plyr_cat = getattr(plyr, item.cat)
@@ -147,6 +158,7 @@ def drop(item):
     
 
 def swap(item):
+    #Swaps item if pack slots are full. Finds pack category for item.
     plyr_cat = getattr(plyr, item.cat)
     swap_num = ""
     for i in range(len(plyr_cat)):
@@ -159,24 +171,22 @@ def swap(item):
         swap_index = input(swap_num + "(C) to cancel: ")
     if swap_index.upper() == "C":
         pass
+    #Drops old item and equips new item.
     else:
         swap_item = plyr_cat[int(swap_index)-1]
-        if item.cat == 'equipment':
-            drop(swap_item)
-        else:
-            plyr_cat.remove(swap_item)
+        drop(swap_item)
         equip(item)
     
        
 def battle(enemy):
+    #Starts battle with passed in enemy, initiates turn object and randomly selects first move.
     global turn
-    print("\n", f"{enemy.clss} encountered!")
-    show_stats(enemy)
     turn = Turn()
     turn.turn = roll(1)
+    print("\n", f"{enemy.clss} encountered!")
+    show_stats(enemy)
     while enemy.hp > 0 and plyr.hp > 0:
-        show_stats(plyr)
-        show_stats(enemy)
+        #If turn is even, player goes, else, enemy.
         if turn.turn % 2 == 0:
             print("\n" + "Your turn:")
             move = ""
@@ -184,15 +194,18 @@ def battle(enemy):
             while move not in inputs:
                 move = input("\n" + "Enter (1) to use physical attack, enter (2) to use item/skill:")
             if move == '1':
-                print("\n" + f"You hit enemy for {plyr.dmg} damage!")
+                print("\n" + f"You hit enemy for {round(plyr.dmg, 2)} damage!")
                 enemy.block -= plyr.dmg
                 if enemy.block < 0:
                     enemy.hp += enemy.block
                     enemy.block = 0
+            #If player chooses to use item / skill, the use function is called.
             else:
                 use(None, enemy)
             turn.turn += 1
+            show_stats(enemy)
         else:
+            #Enemy uses a random skill from it's class.
             print("\n" + "Enemy turn...")
             time.sleep(1)
             rand_skill = random.choice(enemy.enemy_skills)
@@ -200,18 +213,26 @@ def battle(enemy):
             skill(rand_skill, plyr)
             print(f"{enemy.clss} used {enemy.skill}!" + "\n" + f"{enemy.skill_description}")
             turn.turn += 1
+            show_stats(plyr)
     else:
+        #If player wins, calls the loot function, adds block back to stats, and checks if player has leveled up.
         if enemy.hp <= 0:
             print("\n" + f"{enemy.clss} destroyed! You won an item: ")
             loot()
+            block_items = [item.stat for item in plyr.equipment if item.typ=='block']
+            plyr.block = sum(block_items)
             level_up(enemy)
         else:
             print("\n" + "You lose! game over.")
+            time.sleep(3)
+            exit()
 
 def level_up(enemy):
+    #Levels up player if the enemy exp increases player level to a higher int.
     last_lvl = plyr.lvl
     new_lvl = plyr.lvl + enemy.exp
     int_diff = int(new_lvl) - int(last_lvl)
+    #Levels up player for each higher int achieved and calls add skill function.
     for i in range(int_diff):
         print("\n" + "You leveled up!")
         plyr.lvl += enemy.exp/int_diff
@@ -223,17 +244,18 @@ def level_up(enemy):
 
 
 def add_skill():
+    #Checks if there are any unlearned skills for the player that match player level and class.
     clss_skills = []
     if plyr.clss == "Wizard":
         clss_skills = WW_items.wizard_skills
     if plyr.clss == "Warrior":
         clss_skills = WW_items.warrior_skills
-    for item in clss_skills:
+    for skill in clss_skills:
         skill_names = [skill.name for skill in plyr.skills]
-        if item['name'] not in skill_names :
-            if int(plyr.lvl) >= item['lvl']:
-                print(f"You learned {item['name']}!")
-                equip(item)
+        if skill['name'] not in skill_names:
+            if int(plyr.lvl) >= skill['lvl']:
+                print(f"You learned {skill['name']}!")
+                equip(skill)
                 
                        
 class Turn: 
@@ -252,6 +274,7 @@ def story():
     loot()
     loot() 
     loot()
+    battle(WW_classes.Goblin('Goblin'))
     battle(WW_classes.Goblin('Goblin'))
     
     
