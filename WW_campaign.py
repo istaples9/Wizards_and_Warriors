@@ -34,9 +34,9 @@ def newGame():
 def show_stats(char):
     #clear()
     if char.clss not in WW_classes.classes.values():
-        print("\n", char.clss, "|", "HP:", char.hp, "|", "Block:", char.block)
+        print("\n", char.clss, "|", "HP:", round(char.hp, 1), "|", "Block:", round(char.block, 1))
     else:
-        print("\n", char.name, "|", char.clss, "|", "Lvl:", char.lvl, "|", "HP:", char.hp, "|", "MP:", char.mp, "|", "Dmg:", char.dmg, "|", "Block:", char.block)
+        print("\n", char.name, "|", char.clss, "|", "Lvl:", int(char.lvl), "|", "HP:", round(char.hp, 1), "|", "MP:", round(char.mp, 1), "|", "Dmg:", round(char.dmg, 1), "|", "Block:", round(char.block, 1))
         cats = ['skills', 'equipment', 'inventory']
         for cat in cats:
             items = []
@@ -58,15 +58,18 @@ def loot():
     while pick_up.upper() not in ['Y', 'C']:
         pick_up = input(f"Enter (Y) to equip {loot_item['name']}, or (C) to cancel:")
     if pick_up.upper() == 'Y':
-        item = WW_items.Item(loot_item)
-        for key in loot_item:
-            setattr(item, key, loot_item[key])
-        equip(item)
+        equip(loot_item)
     elif pick_up.upper() == 'C':
         pass
 
     
-def equip(item):
+def equip(item_skill):
+    if not isinstance(item_skill, WW_items.Item):
+        item = WW_items.Item(item_skill)
+        for key in item_skill:
+            setattr(item, key, item_skill[key])
+    else:
+        item = item_skill
     plyr_cat = getattr(plyr, item.cat)
     if len(plyr_cat) == 2:
         print("\n", "Only two items can fit in this slot.")
@@ -200,17 +203,39 @@ def battle(enemy):
     else:
         if enemy.hp <= 0:
             print("\n" + f"{enemy.clss} destroyed! You won an item: ")
-            level_up(enemy)
             loot()
+            level_up(enemy)
         else:
             print("\n" + "You lose! game over.")
 
 def level_up(enemy):
-    before_exp = plyr.exp
-    plyr.exp += enemy.exp
-    if int(plyr.exp) > int(before_exp):
-        print("You leveled up!")
-                   
+    last_lvl = plyr.lvl
+    new_lvl = plyr.lvl + enemy.exp
+    int_diff = int(new_lvl) - int(last_lvl)
+    for i in range(int_diff):
+        print("\n" + "You leveled up!")
+        plyr.lvl += enemy.exp/int_diff
+        plyr.hp *= 1.1
+        plyr.mp *= 1.1
+        plyr.dmg *= 1.1
+        plyr.block *= 1.1
+        add_skill()
+
+
+def add_skill():
+    clss_skills = []
+    if plyr.clss == "Wizard":
+        clss_skills = WW_items.wizard_skills
+    if plyr.clss == "Warrior":
+        clss_skills = WW_items.warrior_skills
+    for item in clss_skills:
+        skill_names = [skill.name for skill in plyr.skills]
+        if item['name'] not in skill_names :
+            if int(plyr.lvl) >= item['lvl']:
+                print(f"You learned {item['name']}!")
+                equip(item)
+                
+                       
 class Turn: 
     def __init__(self, turn = 0):
         self.turn = turn

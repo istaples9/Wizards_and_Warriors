@@ -40,7 +40,7 @@ class Warrior(Char):
 class Goblin(Char):
     
     def __init__(self, Char):
-        super().__init__(self, clss='Goblin', hp=7, mp=3, dmg=2, block=1, exp=1.1)
+        super().__init__(self, clss='Goblin', hp=7, mp=3, dmg=2, block=1, exp=2.1)
 
         
     def club_bash(self, skill, plyr=None):

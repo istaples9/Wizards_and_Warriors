@@ -69,28 +69,13 @@ minor_health_potion = {'name': 'Minor Health Potion',
                        'cat': 'inventory'
                       }
 
-heavy_blow = {'name': 'Heavy Blow',
-              'clss': 'Warrior',
-              'description': 'Smashes enemies',
-              'typ': 'dmg',
-              'stat': 4,
-              'mana_cost': 1,
-              'cool_down': 1,
-              'cat': 'skills'
-             }
 
-fortify = {'name': 'Fortify',
-           'clss': 'Warrior',
-           'description': 'Increases block',
-           'typ': 'block',
-           'stat': 3,
-           'mana_cost': 1,
-           'cool_down': 1,
-           'cat': 'skills'
-          }
+items = [hammer, wooden_shield, helmet, cape, staff, wand, minor_mana_potion, minor_health_potion]
+
 
 frost_bite = {'name': 'Frost Bite',
               'clss': 'Wizard',
+              'lvl': 1,
               'description': 'Freezes enemies',
               'typ': 'stun',
               'stat': 1,
@@ -101,6 +86,7 @@ frost_bite = {'name': 'Frost Bite',
 
 ice_shell = {'name': 'Ice Shell',
              'clss': 'Wizard',
+             'lvl': 2,
              'description': 'Casts a frosty armor around yourself',
              'typ': 'block',
              'stat': 3,
@@ -109,7 +95,31 @@ ice_shell = {'name': 'Ice Shell',
              'cat': 'skills'
             }
 
-items = [hammer, wooden_shield, helmet, cape, staff, wand, minor_mana_potion, minor_health_potion, heavy_blow, fortify, frost_bite, ice_shell]
+heavy_blow = {'name': 'Heavy Blow',
+              'clss': 'Warrior',
+              'lvl': 1,
+              'description': 'Smashes enemies',
+              'typ': 'dmg',
+              'stat': 4,
+              'mana_cost': 1,
+              'cool_down': 1,
+              'cat': 'skills'
+             }
+
+fortify = {'name': 'Fortify',
+           'clss': 'Warrior',
+           'lvl': 2,
+           'description': 'Increases block',
+           'typ': 'block',
+           'stat': 3,
+           'mana_cost': 1,
+           'cool_down': 1,
+           'cat': 'skills'
+          }
+
+wizard_skills = [frost_bite, ice_shell]
+
+warrior_skills = [heavy_blow, fortify]
 
 
 def item_info(item):
@@ -117,8 +127,6 @@ def item_info(item):
     print(f"{item['name']}, Class:{item['clss']}, {item['typ']}:{item['stat']}")
     print(f"Description: {item['description']}")
     
-    
-
 
 class Item:
     
