@@ -11,6 +11,11 @@ import numpy as np
 import time
 import os
 import random
+import tkinter
+
+#window = tkinter.Tk()
+#window.title("Wizards and Warriors")
+#window.mainloop()
 
 def newGame():
     #Initiates player object and selects class.
@@ -81,7 +86,7 @@ def equip(item_skill):
     elif item in plyr.skills:
         print("Only one of each skill allowed.")
         swap(item)
-    #adds item / skill to player
+    #ads item / skill to player
     else:
         if item.cat == 'skills':
             plyr_cat.append(item)
@@ -92,9 +97,11 @@ def equip(item_skill):
             setattr(plyr, item.typ, getattr(plyr, item.typ) + item.stat)
             plyr_cat.append(item)
         elif item.cat == 'inventory':
-            plyr_cat.append(item)  
+            plyr_cat.append(item) 
+        #Initiates cool down class for item.
+        item.cd(item.cool_down)
     show_stats(plyr)
-    
+
        
 def use(item, enemy=None):
     #If no item / skill is passed in, player selects one from pack.
@@ -121,32 +128,34 @@ def use(item, enemy=None):
             use_index = ""
             while use_index not in inputs:
                 use_index = input(choose_item + "or (C) to cancel: ")
-            if use_index.upper() == "C":
-                pass
-            else:
+            if use_index.upper() != "C":
                 item = use_cat[int(use_index)-1]
-                use(item, enemy)
+            use(item, enemy)
     #after item has been selected or passed in, enemy and player stats are adjusted based on item stats and pack category.
     else:
-        if item.cat != 'equipment':
-            if item.mana_cost <= plyr.mp:
-                if item.typ == 'stun':
-                    print("\n" + f"Enemy stunned for {item.stat} turn!")
-                    turn.turn += 1
-                elif item.typ == 'dmg':
-                    print(f"Strikes enemy for {item.stat} damage!")
-                    enemy.block -= item.stat
-                    if enemy.block < 0:
-                        enemy.hp += enemy.block
-                        enemy.block = 0
+        if item.cd.is_active(turn.turn) == False:
+            if item.cat != 'equipment':
+                if item.mana_cost <= plyr.mp:
+                    if item.cat == 'inventory':
+                        drop(item)
+                    if item.typ == 'stun':
+                        print("\n" + f"Enemy stunned for {item.stat} turn!")
+                        turn.turn += 1
+                    elif item.typ == 'dmg':
+                        print(f"Strikes enemy for {item.stat} damage!")
+                        enemy.block -= item.stat
+                        if enemy.block < 0:
+                            enemy.hp += enemy.block
+                            enemy.block = 0
+                    else:
+                        setattr(plyr, item.typ, getattr(plyr, item.typ) + item.stat)
+                    plyr.mp -= item.mana_cost
                 else:
-                    setattr(plyr, item.typ, getattr(plyr, item.typ) + item.stat)
-                plyr.mp -= item.mana_cost
-            else:
-                print("\n" + "Not enough mana!")
-                use(None)
-        if item.cat == 'inventory':
-            drop(item)
+                    print("\n" + "Not enough mana!")
+                    use(None)
+                item.cd.triggered_turn = turn.turn
+        else:
+            print("\n" + "Item on cool down.")
 
 
 def drop(item):
@@ -225,7 +234,7 @@ def battle(enemy):
         else:
             print("\n" + "You lose! game over.")
             time.sleep(3)
-            exit()
+
 
 def level_up(enemy):
     #Levels up player if the enemy exp increases player level to a higher int.

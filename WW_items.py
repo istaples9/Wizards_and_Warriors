@@ -79,8 +79,8 @@ frost_bite = {'name': 'Frost Bite',
               'description': 'Freezes enemies',
               'typ': 'stun',
               'stat': 1,
-              'mana_cost': 3,
-              'cool_down': 1,
+              'mana_cost': 2,
+              'cool_down': 4,
               'cat': 'skills'
              }
 
@@ -90,8 +90,8 @@ ice_shell = {'name': 'Ice Shell',
              'description': 'Casts a frosty armor around yourself',
              'typ': 'block',
              'stat': 4,
-             'mana_cost': 3,
-             'cool_down': 1,
+             'mana_cost': 2,
+             'cool_down': 4,
              'cat': 'skills'
             }
 
@@ -102,7 +102,7 @@ heavy_blow = {'name': 'Heavy Blow',
               'typ': 'dmg',
               'stat': 3,
               'mana_cost': 2,
-              'cool_down': 1,
+              'cool_down': 4,
               'cat': 'skills'
              }
 
@@ -113,7 +113,7 @@ fortify = {'name': 'Fortify',
            'typ': 'block',
            'stat': 4,
            'mana_cost': 2,
-           'cool_down': 1,
+           'cool_down': 4,
            'cat': 'skills'
           }
 
@@ -122,13 +122,29 @@ wizard_skills = [frost_bite, ice_shell]
 warrior_skills = [heavy_blow, fortify]
 
 
+
 def item_info(item):
     print("\n")
     print(f"{item['name']}, Class:{item['clss']}, {item['typ']}:{item['stat']}")
     print(f"Description: {item['description']}")
     
+class coolDown:
+    
+    def __init__(self, cool_down, triggered_turn=0):
+        self.cool_down = cool_down
+        self.triggered_turn = triggered_turn
+         
+    def is_active(self, current_turn):
+        self.current_turn = current_turn
+        self.elapsed_turns = self.current_turn - self.triggered_turn
+        if self.elapsed_turns == self.current_turn:
+            return False
+        elif self.cool_down - self.elapsed_turns == 0:
+            return False
+        else:
+            return True
 
-class Item:
+class Item(coolDown):
     
     def __init__(self, name=None, clss=None, description=None, typ=None, stat=0, mana_cost=0, cool_down=0, cat=None):
         self.name = name
@@ -140,6 +156,14 @@ class Item:
         self.cool_down = cool_down
         self.cat = cat
         
+    def cd(self, cool_down):
+        self.cd = coolDown(cool_down)
+
+        
+        
+        
+        
+
     
 
 

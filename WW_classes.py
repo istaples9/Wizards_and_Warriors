@@ -9,7 +9,7 @@ classes = {1: "Wizard", 2: "Warrior"}
 
 class Char:
     
-    def __init__(self, name, clss=None, lvl=0, exp=0, hp=0, mp=0, dmg=2, block=0, equipment=[], skills=[], inventory=[]):
+    def __init__(self, name, clss=None, lvl=0, exp=0, hp=0, mp=0, dmg=9, block=0, equipment=[], skills=[], inventory=[]):
         self.name = name
         self.clss = clss
         self.lvl = lvl
@@ -45,8 +45,8 @@ class Goblin(Char):
         
     def club_bash(self, skill, plyr=None):
         self.skill = "Club Bash"
-        self.skill_description = "Deals 3 Damage."
-        plyr.block -= 3
+        self.skill_description = f"Deals 2 Damage."
+        plyr.block -= 2
         if plyr.block < 0:
             plyr.hp += plyr.block
             plyr.block = 0
