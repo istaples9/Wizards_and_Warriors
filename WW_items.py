@@ -139,7 +139,7 @@ class coolDown:
         self.elapsed_turns = self.current_turn - self.triggered_turn
         if self.elapsed_turns == self.current_turn:
             return False
-        elif self.cool_down - self.elapsed_turns == 0:
+        elif self.elapsed_turns == self.cool_down:
             return False
         else:
             return True

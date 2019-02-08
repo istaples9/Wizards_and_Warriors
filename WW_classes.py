@@ -26,14 +26,14 @@ class Char:
 class Wizard(Char):
     
     def __init__(self, Char):
-        super().__init__(self, hp=3, mp=5)
+        super().__init__(self, hp=15, mp=15)
     
         
                  
 class Warrior(Char):
     
     def __init__(self, Char):
-        super().__init__(self, hp=5, mp=3)
+        super().__init__(self, hp=15, mp=15)
        
          
         
@@ -50,10 +50,10 @@ class Goblin(Char):
         if plyr.block < 0:
             plyr.hp += plyr.block
             plyr.block = 0
-        
+    
     def battle_stance(self, skill, plyr=None):
         self.skill = "Battle Stance"
-        self.skill_description = "Increases Block by 2."
+        self.skill_description = "Increases block by 2."
         self.block += 2
         
     

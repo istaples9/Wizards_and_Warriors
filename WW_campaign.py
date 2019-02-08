@@ -49,11 +49,14 @@ def show_stats(char):
         for cat in cats:
             items = []
             char_cat = getattr(char, cat)
-            for e in char_cat:
+            for item in char_cat:
                 if cat == 'skills':
-                    items.append([f" {e.name}, {e.typ}:{round(e.stat, 2)}, Mana Cost:{round(e.mana_cost, 2)}, Cool Down:{round(e.cool_down, 2)}"])
+                    cool_down_count = item.cool_down
+                    if hasattr(item.cd, 'elapsed_turns'):
+                        cool_down_count = item.cd.elapsed_turns
+                    items.append([f" {item.name}, {item.typ}:{round(item.stat, 2)}, Mana Cost:{round(item.mana_cost, 2)}, Cool Down:{cool_down_count}/{item.cool_down}"])
                 else: 
-                    items.append([f" {e.name}, {e.typ}:{round(e.stat, 2)}"])
+                    items.append([f" {item.name}, {item.typ}:{round(item.stat, 2)}"])
             print(f"{cat.capitalize()}: {items}")
         
         
@@ -117,7 +120,8 @@ def use(item, enemy=None):
         while use_index not in inputs:
             use_index = input(choose_cat + "or (C) to cancel: ")
         if use_index.upper() == "C":
-            turn.turn += 1
+            turn.turn -=1
+            return
         else:
             use_cat = getattr(plyr, pack[int(use_index)-1])
             choose_item = ""
@@ -142,7 +146,7 @@ def use(item, enemy=None):
                         print("\n" + f"Enemy stunned for {item.stat} turn!")
                         turn.turn += 1
                     elif item.typ == 'dmg':
-                        print(f"Strikes enemy for {item.stat} damage!")
+                        print("\n" + f"Strikes enemy for {item.stat} damage!")
                         enemy.block -= item.stat
                         if enemy.block < 0:
                             enemy.hp += enemy.block
@@ -155,7 +159,8 @@ def use(item, enemy=None):
                     use(None)
                 item.cd.triggered_turn = turn.turn
         else:
-            print("\n" + "Item on cool down.")
+            print("\n" + f"Item on cool down: {item.cool_down-item.cd.elapsed_turns} turns left!")
+            use(None, enemy)
 
 
 def drop(item):
@@ -196,6 +201,7 @@ def battle(enemy):
     show_stats(enemy)
     while enemy.hp > 0 and plyr.hp > 0:
         #If turn is even, player goes, else, enemy.
+        print(f"Turn:{turn.turn}")
         if turn.turn % 2 == 0:
             print("\n" + "Your turn:")
             move = ""
@@ -211,8 +217,6 @@ def battle(enemy):
             #If player chooses to use item / skill, the use function is called.
             else:
                 use(None, enemy)
-            turn.turn += 1
-            show_stats(enemy)
         else:
             #Enemy uses a random skill from it's class.
             print("\n" + "Enemy turn...")
@@ -221,19 +225,17 @@ def battle(enemy):
             skill = getattr(enemy, rand_skill)
             skill(rand_skill, plyr)
             print(f"{enemy.clss} used {enemy.skill}!" + "\n" + f"{enemy.skill_description}")
-            turn.turn += 1
             show_stats(plyr)
+        turn.turn += 1
+    #If player wins, calls the loot function, adds block back to stats, and checks if player has leveled up.
+    if enemy.hp <= 0:
+        print("\n" + f"{enemy.clss} destroyed! You won an item: ")
+        loot()
+        block_items = [item.stat for item in plyr.equipment if item.typ=='block']
+        plyr.block = sum(block_items)
+        level_up(enemy)
     else:
-        #If player wins, calls the loot function, adds block back to stats, and checks if player has leveled up.
-        if enemy.hp <= 0:
-            print("\n" + f"{enemy.clss} destroyed! You won an item: ")
-            loot()
-            block_items = [item.stat for item in plyr.equipment if item.typ=='block']
-            plyr.block = sum(block_items)
-            level_up(enemy)
-        else:
-            print("\n" + "You lose! game over.")
-            time.sleep(3)
+        print("\n" + "You lose! game over.")
 
 
 def level_up(enemy):
@@ -273,7 +275,7 @@ class Turn:
 
          
 def roll(die):
-    return randint(0 , die+1)
+    return randint(0 , 1)
    
 def clear():
     os.system( 'cls' )
