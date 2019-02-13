@@ -29,6 +29,14 @@ helmet = {'name': 'Helmet',
           'cat': 'equipment'
          }
 
+rogues_ring = {'name': 'Rogues Ring',
+               'clss': None,
+               'description': 'Inceases accuracy',
+               'typ': 'acc',
+               'stat': 2,
+               'cat': 'equipment'
+              }
+
 cape = {'name': 'Cape',
         'clss': 'Wizard',
         'description': 'Magical tattered cape',
@@ -57,7 +65,7 @@ minor_mana_potion = {'name': 'Minor Mana Potion',
                      'clss': None,
                      'description': 'Increases player mana on use.',
                      'typ': 'mp',
-                     'stat': 2,
+                     'stat': 3,
                      'cat': 'inventory'
                     }
 
@@ -65,12 +73,19 @@ minor_health_potion = {'name': 'Minor Health Potion',
                        'clss': None,
                        'description': 'Increases player health on use.',
                        'typ': 'hp',
-                       'stat': 2,
+                       'stat': 3,
                        'cat': 'inventory'
                       }
 
+dexterity_potion = {'name': 'Minor Health Potion',
+                    'clss': None,
+                    'description': 'Increases player accuracy on use.',
+                    'typ': 'acc',
+                    'stat': 3,
+                    'cat': 'inventory'
+                   }
 
-items = [hammer, wooden_shield, helmet, cape, staff, wand, minor_mana_potion, minor_health_potion]
+items = [hammer, wooden_shield, helmet, rogues_ring, cape, staff, wand, minor_mana_potion, minor_health_potion, dexterity_potion]
 
 
 frost_bite = {'name': 'Frost Bite',
@@ -95,6 +110,17 @@ ice_shell = {'name': 'Ice Shell',
              'cat': 'skills'
             }
 
+wizards_focus = {'name': 'Wizards Focus',
+                 'clss': 'Wizard',
+                 'lvl': 2,
+                 'description': 'Enters a state of intense concentration',
+                 'typ': 'acc',
+                 'stat': 3,
+                 'mana_cost': 2,
+                 'cool_down': 4,
+                 'cat': 'skills'
+                 }
+
 heavy_blow = {'name': 'Heavy Blow',
               'clss': 'Warrior',
               'lvl': 1,
@@ -117,9 +143,20 @@ fortify = {'name': 'Fortify',
            'cat': 'skills'
           }
 
-wizard_skills = [frost_bite, ice_shell]
+battle_zen = {'name': 'Battle Zen',
+              'clss': 'Warrior',
+              'lvl': 2,
+              'description': 'Hones in focus.',
+              'typ': 'acc',
+              'stat': 3,
+              'mana_cost': 2,
+              'cool_down': 4,
+              'cat': 'skills'
+             }
 
-warrior_skills = [heavy_blow, fortify]
+wizard_skills = [frost_bite, ice_shell, wizards_focus]
+
+warrior_skills = [heavy_blow, fortify, battle_zen]
 
 
 
@@ -146,13 +183,14 @@ class coolDown:
 
 class Item(coolDown):
     
-    def __init__(self, name=None, clss=None, description=None, typ=None, stat=0, mana_cost=0, cool_down=0, cat=None):
+    def __init__(self, name=None, clss=None, description=None, typ=None, stat=0, acc=0, mana_cost=0, cool_down=0, cat=None):
         self.name = name
         self.clss = clss
         self.description = description
         self.typ = typ
         self.stat = stat
         self.mana_cost = mana_cost
+        self.acc = acc
         self.cool_down = cool_down
         self.cat = cat
         

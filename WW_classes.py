@@ -9,7 +9,7 @@ classes = {1: "Wizard", 2: "Warrior"}
 
 class Char:
     
-    def __init__(self, name, clss=None, lvl=0, exp=0, hp=0, mp=0, dmg=9, block=0, equipment=[], skills=[], inventory=[]):
+    def __init__(self, name, clss=None, lvl=0, exp=0, hp=0, mp=0, dmg=9, block=0, acc=0, equipment=[], skills=[], inventory=[]):
         self.name = name
         self.clss = clss
         self.lvl = lvl
@@ -18,6 +18,7 @@ class Char:
         self.mp = mp
         self.dmg = dmg
         self.block = block
+        self.acc = acc
         self.equipment = equipment
         self.skills = skills
         self.inventory = inventory
@@ -40,7 +41,7 @@ class Warrior(Char):
 class Goblin(Char):
     
     def __init__(self, Char):
-        super().__init__(self, clss='Goblin', hp=7, mp=3, dmg=1.5, block=1, exp=1)
+        super().__init__(self, clss='Goblin', hp=7, mp=3, dmg=1.5, block=1, acc=2, exp=1)
 
         
     def club_bash(self, skill, plyr=None):

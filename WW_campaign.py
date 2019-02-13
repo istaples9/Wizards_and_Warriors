@@ -44,7 +44,7 @@ def show_stats(char):
     if char.clss not in WW_classes.classes.values():
         print("\n", char.clss, "|", "HP:", round(char.hp, 1), "|", "Block:", round(char.block, 1))
     else:
-        print("\n", char.name, "|", char.clss, "|", "Lvl:", int(char.lvl), "|", "HP:", round(char.hp, 1), "|", "MP:", round(char.mp, 1), "|", "Dmg:", round(char.dmg, 1), "|", "Block:", round(char.block, 1))
+        print("\n", char.name, "|", char.clss, "|", "Lvl:", int(char.lvl), "|", "HP:", round(char.hp, 1), "|", "MP:", round(char.mp, 1), "|", "Dmg:", round(char.dmg, 1), "|", "Block:", round(char.block, 1), "|", "Accuracy:", round(char.acc, 1))
         cats = ['skills', 'equipment', 'inventory']
         for cat in cats:
             items = []
@@ -106,62 +106,64 @@ def equip(item_skill):
     show_stats(plyr)
 
        
-def use(item, enemy=None):
+def choose():
     #If no item / skill is passed in, player selects one from pack.
-    if item == None:
-        pack = [cat for cat in ["skills", "inventory"] if len(getattr(plyr, cat)) > 0]
-        choose_cat = ""
-        for i in range(len(pack)):
-            cat = pack[i]
-            choose_cat += (f"Enter ({i+1}) to use {cat.capitalize()}, ")
-        inputs = [str(i) for i in range(1, len(pack)+1)]
+    pack = [cat for cat in ["skills", "inventory"] if len(getattr(plyr, cat)) > 0]
+    choose_cat = ""
+    for i in range(len(pack)):
+        cat = pack[i]
+        choose_cat += (f"Enter ({i+1}) to use {cat.capitalize()}, ")
+    inputs = [str(i) for i in range(1, len(pack)+1)]
+    inputs += ["c", "C"]
+    use_index = ""
+    while use_index not in inputs:
+        use_index = input(choose_cat + "or (C) to cancel: ")
+    if use_index.upper() == "C":
+        turn.turn -=1
+        return
+    else:
+        use_cat = getattr(plyr, pack[int(use_index)-1])
+        choose_item = ""
+        for i in range(len(use_cat)):
+            choose_item += (f"Enter ({i+1}) to use {getattr(use_cat[i], 'name')}, ")
+        inputs = [str(i) for i in range(1, len(use_cat)+1)]
         inputs += ["c", "C"]
         use_index = ""
         while use_index not in inputs:
-            use_index = input(choose_cat + "or (C) to cancel: ")
+            use_index = input(choose_item + "or (C) to cancel: ")
         if use_index.upper() == "C":
             turn.turn -=1
             return
         else:
-            use_cat = getattr(plyr, pack[int(use_index)-1])
-            choose_item = ""
-            for i in range(len(use_cat)):
-                choose_item += (f"Enter ({i+1}) to use {getattr(use_cat[i], 'name')}, ")
-            inputs = [str(i) for i in range(1, len(use_cat)+1)]
-            inputs += ["c", "C"]
-            use_index = ""
-            while use_index not in inputs:
-                use_index = input(choose_item + "or (C) to cancel: ")
-            if use_index.upper() != "C":
-                item = use_cat[int(use_index)-1]
-            use(item, enemy)
+            item = use_cat[int(use_index)-1]
+            return item
+ 
+def use(item, enemy=None):
     #after item has been selected or passed in, enemy and player stats are adjusted based on item stats and pack category.
-    else:
-        if item.cd.is_active(turn.turn) == False:
-            if item.cat != 'equipment':
-                if item.mana_cost <= plyr.mp:
-                    if item.cat == 'inventory':
-                        drop(item)
-                    if item.typ == 'stun':
-                        print("\n" + f"Enemy stunned for {item.stat} turn!")
-                        turn.turn += 1
-                    elif item.typ == 'dmg':
-                        print("\n" + f"Strikes enemy for {item.stat} damage!")
-                        enemy.block -= item.stat
-                        if enemy.block < 0:
-                            enemy.hp += enemy.block
-                            enemy.block = 0
+    if item.cd.is_active(turn.turn) == False:
+        if item.cat != 'equipment':
+            if item.mana_cost <= plyr.mp:
+                if item.cat == 'inventory':
+                    drop(item)
+                if item.typ == 'stun':
+                    print("\n" + f"Enemy stunned for {item.stat} turn!")
+                    turn.turn += 1
+                elif item.typ == 'dmg':
+                    print("\n" + f"Strikes enemy for {item.stat} damage!")
+                    enemy.block -= item.stat
+                    if enemy.block < 0:
+                        enemy.hp += enemy.block
+                        enemy.block = 0
                     else:
                         setattr(plyr, item.typ, getattr(plyr, item.typ) + item.stat)
                     plyr.mp -= item.mana_cost
+                    item.cd.triggered_turn = turn.turn
                 else:
                     print("\n" + "Not enough mana!")
                     use(None)
-                item.cd.triggered_turn = turn.turn
         else:
             print("\n" + f"Item on cool down: {item.cool_down-item.cd.elapsed_turns} turns left!")
             use(None, enemy)
-
 
 def drop(item):
     #Drops item, if item category is equipment, player stats are adjusted.
@@ -216,7 +218,7 @@ def battle(enemy):
                     enemy.block = 0
             #If player chooses to use item / skill, the use function is called.
             else:
-                use(None, enemy)
+                use(choose(), enemy)
         else:
             #Enemy uses a random skill from it's class.
             print("\n" + "Enemy turn...")
